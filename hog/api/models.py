@@ -40,3 +40,6 @@ class Measurement(models.Model):
             self.measurement_type,
             self.box,
             self.measurement)
+
+    class Meta:
+        ordering = ['observed_at']
