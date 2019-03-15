@@ -22,6 +22,7 @@ from django_filters import FilterSet
 from api.models import Box
 from api.models import Hog
 from api.models import Measurement
+from frontend.views import box
 
 from rest_framework import routers, serializers, viewsets
 
@@ -76,5 +77,6 @@ router.register('measurements', MeasurementViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('box/<slug:code>', box),
 ]
