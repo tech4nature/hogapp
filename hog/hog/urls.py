@@ -52,7 +52,7 @@ class BoxViewSet(viewsets.ModelViewSet):
 class MeasurementSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Measurement
-        fields = ('box', 'hog', 'measurement_type', 'measurement', 'observed_at')
+        fields = ('measurement_type', 'measurement', 'observed_at')
 
 
 class MeasurementFilter(FilterSet):
@@ -66,6 +66,8 @@ class MeasurementViewSet(viewsets.ModelViewSet):
     serializer_class = MeasurementSerializer
     ordering_fields = ['observed_at', 'measurement_type']
     filterset_class = MeasurementFilter
+    page_size_query_param = 'page_size'
+    max_page_size = 10000
 
 
 # Routers provide an easy way of automatically determining the URL conf.
