@@ -8,7 +8,7 @@ import random
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from api.models import Box
+from api.models import Location
 from api.models import Hog
 from api.models import Measurement
 
@@ -52,37 +52,36 @@ class Command(BaseCommand):
         fake = make_faker()
         with transaction.atomic():
             Measurement.objects.all().delete()
-            Box.objects.all().delete()
+            Location.objects.all().delete()
             Hog.objects.all().delete()
             for box in range(0, NUM_BOXES):
+                box1, _ = Location.objects.get_or_create(
+                    code='box-' + fake.ean13(),
+                    location_type='box',
+                    name=fake.company() + " Box",
+                    software_version='0.6')
+                for _ in range(0, 1800):
+                    observed_at = fake.date_time_between_dates(
+                        datetime_start=date(2018, 10, 1),
+                        datetime_end=date(2019, 4, 1),
+                        tzinfo=pytz.utc)
+                    out_temp = fake.temperature(observed_at)
+                    Measurement.objects.create(
+                        location=box1,
+                        measurement_type='out_temp',
+                        measurement=out_temp,
+                        observed_at=observed_at)
+                    in_temp = (out_temp * 10 + random.choice(
+                        range(0, 30))) / 10.0
+                    Measurement.objects.create(
+                        location=box1,
+                        measurement_type='in_temp',
+                        measurement=in_temp,
+                        observed_at=observed_at)
                 for hog in range(0, NUM_HOGS_PER_BOX):
-                    box1, _ = Box.objects.get_or_create(
-                        code='box-' + fake.ean13(),
-                        name=fake.company() + " Box",
-                        software_version='0.6')
                     hog1, _ = Hog.objects.get_or_create(
                         code='hog-' + fake.ean13(),
                         name=fake.name())
-                    for _ in range(0, 1800):
-                        observed_at = fake.date_time_between_dates(
-                            datetime_start=date(2018, 10, 1),
-                            datetime_end=date(2019, 4, 1),
-                            tzinfo=pytz.utc)
-                        out_temp = fake.temperature(observed_at)
-                        Measurement.objects.create(
-                            hog=hog1,
-                            box=box1,
-                            measurement_type='out_temp',
-                            measurement=out_temp,
-                            observed_at=observed_at)
-                        in_temp = (out_temp * 10 + random.choice(
-                            range(0, 30))) / 10.0
-                        Measurement.objects.create(
-                            hog=hog1,
-                            box=box1,
-                            measurement_type='in_temp',
-                            measurement=in_temp,
-                            observed_at=observed_at)
                     for _ in range(0, random.choice(range(5, 100))):
                         # A random number of visits where each hog gets weighed
                         observed_at = fake.date_time_between_dates(
@@ -92,7 +91,7 @@ class Command(BaseCommand):
                         weight = fake.weight(observed_at)
                         Measurement.objects.create(
                             hog=hog1,
-                            box=box1,
+                            location=box1,
                             measurement_type='weight',
                             measurement=weight,
                             observed_at=observed_at)

@@ -19,10 +19,10 @@ from django.urls import path
 
 from django_filters import FilterSet
 
-from api.models import Box
+from api.models import Location
 from api.models import Hog
 from api.models import Measurement
-from frontend.views import box
+from frontend.views import location
 
 from rest_framework import routers, serializers, viewsets
 
@@ -38,15 +38,15 @@ class HogViewSet(viewsets.ModelViewSet):
     serializer_class = HogSerializer
 
 
-class BoxSerializer(serializers.HyperlinkedModelSerializer):
+class LocationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Box
+        model = Location
         fields = ('code', 'name', 'created_at', 'software_version')
 
 
-class BoxViewSet(viewsets.ModelViewSet):
-    queryset = Box.objects.all()
-    serializer_class = BoxSerializer
+class LocationViewSet(viewsets.ModelViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
 
 
 class MeasurementSerializer(serializers.HyperlinkedModelSerializer):
@@ -58,7 +58,7 @@ class MeasurementSerializer(serializers.HyperlinkedModelSerializer):
 class MeasurementFilter(FilterSet):
     class Meta:
         model = Measurement
-        fields = ('box', 'hog', 'measurement_type', 'observed_at')
+        fields = ('location', 'hog', 'measurement_type', 'observed_at')
 
 
 class MeasurementViewSet(viewsets.ModelViewSet):
@@ -73,12 +73,12 @@ class MeasurementViewSet(viewsets.ModelViewSet):
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register('hogs', HogViewSet)
-router.register('boxes', BoxViewSet)
+router.register('locations', LocationViewSet)
 router.register('measurements', MeasurementViewSet)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('box/<slug:code>', box),
+    path('location/<slug:code>', location),
 ]

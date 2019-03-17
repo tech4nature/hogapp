@@ -9,9 +9,17 @@ class Hog(models.Model):
         return self.name
 
 
-class Box(models.Model):
+class Location(models.Model):
+    LOCATION_TYPE_CHOICES = [
+        ('box', 'box'),
+        ('tunnel', 'tunnel'),
+    ]
     code = models.CharField(max_length=80, primary_key=True)
     name = models.CharField(max_length=200, blank=True, null=True)
+    location_type = models.CharField(
+        max_length=10,
+        choices=LOCATION_TYPE_CHOICES,
+        db_index=True)
     software_version = models.CharField(max_length=5, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -26,8 +34,9 @@ class Measurement(models.Model):
         ('out_temp', 'out_temp')
     ]
 
-    hog = models.ForeignKey(Hog, on_delete=models.PROTECT)
-    box = models.ForeignKey(Box, on_delete=models.PROTECT)
+    hog = models.ForeignKey(
+        Hog, on_delete=models.PROTECT, blank=True, null=True)
+    location = models.ForeignKey(Location, on_delete=models.PROTECT)
     measurement_type = models.CharField(
         max_length=10,
         choices=MEASUREMENT_TYPE_CHOICES,
@@ -38,7 +47,7 @@ class Measurement(models.Model):
     def __unicode__(self):
         return "Measurement {} at {}: {}".format(
             self.measurement_type,
-            self.box,
+            self.location,
             self.measurement)
 
     class Meta:

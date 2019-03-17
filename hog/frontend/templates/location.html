@@ -2,6 +2,8 @@
 
 {% block content %}
 <script>
+  // Two series:
+  // https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/compare/
 $(document).ready(function() {
   function convertData(data) {
     data = $.map(data['results'], function(a) {
@@ -10,10 +12,10 @@ $(document).ready(function() {
      });
    return data;
   };
-  url = '/api/measurements/?box={{ box.code }}&measurement_type=in_temp&page_size=1000',
-  $.getJSON(url, function (data) {
+  var temp_url = '/api/measurements/?box={{ box.code }}&measurement_type=in_temp&page_size=1000';
+  $.getJSON(temp_url, function (data) {
     // Create the chart
-    Highcharts.stockChart('container', {
+    Highcharts.stockChart('temp-container', {
 
 
         rangeSelector: {
@@ -21,14 +23,14 @@ $(document).ready(function() {
         },
 
         title: {
-            text: 'Temperatures'
+            text: 'Temperatures (C)'
         },
         series: [{
             name: 'Temp',
             data: convertData(data),
             tooltip: {
                 valueDecimals: 1
-            }
+            },
         }]
     });
   });
@@ -39,7 +41,7 @@ $(document).ready(function() {
 <div class="container">
   <div class="row">
     <div class="col">
-      <div id="container" style="width:100%; height:400px;">Loading...</div>
+      <div id="temp-container" style="width:100%; height:400px;">Loading...</div>
     </div>
   </div>
 </div>

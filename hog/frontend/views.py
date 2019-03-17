@@ -1,9 +1,9 @@
 from django.shortcuts import render
 
-from api.models import Box
+from api.models import Location
 
 
-def box(request, code):
-    box = Box.objects.get(code=code)
-    context = {'box': box}
-    return render(request, 'box.html', context=context)
+def location(request, code):
+    locationur = Location.objects.get(code=code)
+    context = {'location': location}
+    return render(request, 'location.html', context=context)
