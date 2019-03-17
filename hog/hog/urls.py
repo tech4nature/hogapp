@@ -22,6 +22,7 @@ from django_filters import FilterSet
 from api.models import Location
 from api.models import Hog
 from api.models import Measurement
+from frontend.views import index
 from frontend.views import location
 
 from rest_framework import routers, serializers, viewsets
@@ -78,7 +79,8 @@ router.register('measurements', MeasurementViewSet)
 
 
 urlpatterns = [
+    path('', index, name='index'),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('location/<slug:code>', location),
+    path('location/<slug:code>', location, name='location'),
 ]
