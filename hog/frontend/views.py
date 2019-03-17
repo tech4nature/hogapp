@@ -8,6 +8,7 @@ def index(request):
     context = {'locations': locations}
     return render(request, 'index.html', context=context)
 
+
 def location(request, code):
     location = Location.objects.get(code=code)
     context = {'location': location}

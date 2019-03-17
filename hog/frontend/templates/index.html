@@ -8,7 +8,7 @@
     <div class="col">
       <ul>
         {% for location in locations %}
-        <li><a href="{% url 'location' location.code %}">{{ location }}</a></li>
+          <li><a href="{% url 'location' location.code %}">{{ location }}</a></li>
         {% endfor %}
       </ul>
     </div>
