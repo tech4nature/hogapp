@@ -5,7 +5,7 @@ class Hog(models.Model):
     code = models.CharField(max_length=80, primary_key=True)
     name = models.CharField(max_length=200, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -23,8 +23,11 @@ class Location(models.Model):
     software_version = models.CharField(max_length=5, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
+
+    def hogs(self):
+            return Hog.objects.filter(measurement__location=self).distinct()
 
 
 class Measurement(models.Model):
