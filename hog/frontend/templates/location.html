@@ -5,6 +5,9 @@
 <script>
   var location_code = '{{ location.code }}';
   var hog_codes = [{% for hog in location.hogs %}'{{hog.code}}',{% endfor %}];
+  var min_date = {{ min_date }};
+  var max_date = {{ max_date }};
+
 </script>
 <script src="{% static 'main.js' %}"></script>
 
@@ -12,7 +15,7 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      <div id="temp-container" style="width:100%; height:400px;">Loading...</div>
+      <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
     </div>
   </div>
   <div class="row">
@@ -21,7 +24,7 @@
       <ul>
         {% for hog in location.hogs %}
           <h3><a href="">{{ hog }}</a></h3>
-          <div id="weight-container-{{ hog.code }}" style="width:100%; height:400px;">Loading...</div>
+          <div class="measurement-chart" id="weight-container-{{ hog.code }}" style="width:100%; height:400px;">Loading...</div>
         {% endfor %}
       </ul>
     </div>
