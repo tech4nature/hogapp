@@ -65,6 +65,9 @@ $(document).ready(function() {
         rangeSelector: {
           selected: 1
         },
+        navigator: {
+          enabled: false
+        },
         xAxis: {
           startOnTick: true,
           endOnTick: true,
