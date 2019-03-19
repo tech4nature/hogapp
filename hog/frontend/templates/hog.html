@@ -1,0 +1,22 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col">
+      <h1>Hog: {{ hog.name }}</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <h2>Locations:</h2>
+      <ul>
+        {% for location in locations %}
+        <li><a href="{% url 'location' location.code %}">{{ location }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+{% endblock %}

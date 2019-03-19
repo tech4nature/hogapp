@@ -1,17 +1,11 @@
 {% extends "_base.html" %}
+{% load static %}
 
 {% block content %}
 
-<h1>Box: {{ box.name }}</h1>
-<div class="container">
-  <div class="row">
-    <div class="col">
-      <ul>
-        {% for location in locations %}
-          <li><a href="{% url 'location' location.code %}">{{ location }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-</div>
+<h1>Welcome to Hedgehog Republic!</h1>
+
+<p>Intro stuff goes here</p>
+
+
 {% endblock %}

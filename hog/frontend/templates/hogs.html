@@ -1,0 +1,19 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col">
+      <h1>All the hogs we know about</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <ul>
+        {% for hog in hogs %}
+          <li><a href="{% url 'hog' hog.code %}">{{ hog }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

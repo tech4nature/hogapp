@@ -24,6 +24,9 @@ from api.models import Hog
 from api.models import Measurement
 from frontend.views import index
 from frontend.views import location
+from frontend.views import locations
+from frontend.views import hog
+from frontend.views import hogs
 
 from rest_framework import routers, serializers, viewsets
 
@@ -80,7 +83,10 @@ router.register('measurements', MeasurementViewSet)
 
 urlpatterns = [
     path('', index, name='index'),
+    path('locations/', locations, name='locations'),
+    path('hogs/', hogs, name='hogs'),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('location/<slug:code>', location, name='location'),
+    path('hog/<slug:code>', hog, name='hog'),
 ]
