@@ -6,10 +6,12 @@ $(document).ready(function() {
   function convertData(data) {
     data = $.map(data['results'], function(a) {
       var d = new Date(a['observed_at']).getTime();
-       return [[d, a['measurement']]];
-     });
-   return data;
+      var point = [[d, a['measurement']]];
+      return point;
+    });
+    return data;
   };
+
   function tempChart() {
     var temp_url = '/api/measurements/?location=' + location_code + '&measurement_type=in_temp&page_size=1000';
     $.getJSON(temp_url, function (data) {
@@ -19,8 +21,9 @@ $(document).ready(function() {
           selected: 1
         },
         xAxis: {
-          startOnTick: true,
-          endOnTick: true,
+          type: 'datetime',
+          startOnTick: false,
+          endOnTick: false,
           min: min_date,
           max: max_date,
           events: {
@@ -44,13 +47,14 @@ $(document).ready(function() {
   }
 
   function syncExtremes(min, max, source_chart_id) {
-    if (!adjusting) {
     if (!window.adjusting) {
       window.adjusting = true;
       $.each($('.measurement-chart'), function(i, chart) {
         if (chart.id !== source_chart_id) {
           chart = $(chart).highcharts();
-          chart.xAxis[0].setExtremes(min, max);
+          var redraw = false;
+          var animation = false;
+          chart.xAxis[0].setExtremes(min, max, redraw, animation);
         }
       });
       window.adjusting = false;
@@ -62,16 +66,26 @@ $(document).ready(function() {
     $.getJSON(temp_url, function (data) {
       // Create the chart
       var chart_id = 'weight-container-' + hog_code;
-      Highcharts.stockChart(chart_id, {
+      Highcharts.chart(chart_id, {
+        chart: {
+          type: 'column'
+        },
         rangeSelector: {
           selected: 1
         },
         navigator: {
           enabled: false
         },
+        plotOptions: {
+          series: {
+            pointWidth: 10,
+            groupPadding: 0
+          }
+        },
         xAxis: {
-          startOnTick: true,
-          endOnTick: true,
+          type: 'datetime',
+          startOnTick: false,
+          endOnTick: false,
           min: min_date,
           max: max_date,
           events: {
@@ -88,11 +102,12 @@ $(document).ready(function() {
           data: convertData(data),
           tooltip: {
             valueDecimals: 1
-          },
+          }
         }]
       });
     });
   }
+
   tempChart();
   $.each(hog_codes, function(i, code) {
     weightChart(code);
