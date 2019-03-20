@@ -34,6 +34,7 @@ def location(request, code):
 
 
 def hog(request, code):
-    locations = Location.objects.get(hog=hog)
-    context = {'locations': locations}
-    return render(request, 'h0g.html', context=context)
+    hog = Hog.objects.get(code=code)
+    context = {'locations': locations,
+               'hog': hog}
+    return render(request, 'hog.html', context=context)

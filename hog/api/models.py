@@ -8,6 +8,9 @@ class Hog(models.Model):
     def __str__(self):
         return self.name
 
+    def locations(self):
+        return Location.objects.filter(measurement__hog=self).distinct()
+
 
 class Location(models.Model):
     LOCATION_TYPE_CHOICES = [
