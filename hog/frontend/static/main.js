@@ -1,7 +1,7 @@
 // Two series:
 // https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/compare/
 $(document).ready(function() {
-  var adjusting = false;
+  window.adjusting = false;
 
   function convertData(data) {
     data = $.map(data['results'], function(a) {
@@ -45,14 +45,15 @@ $(document).ready(function() {
 
   function syncExtremes(min, max, source_chart_id) {
     if (!adjusting) {
-      adjusting = true;
+    if (!window.adjusting) {
+      window.adjusting = true;
       $.each($('.measurement-chart'), function(i, chart) {
         if (chart.id !== source_chart_id) {
           chart = $(chart).highcharts();
           chart.xAxis[0].setExtremes(min, max);
         }
       });
-      adjusting = false;
+      window.adjusting = false;
     }
   }
 
