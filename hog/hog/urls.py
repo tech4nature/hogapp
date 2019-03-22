@@ -13,11 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
+
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include
 from django.urls import path
 
 from django_filters import FilterSet
+from django_filters import ChoiceFilter
 
 from api.models import Location
 from api.models import Hog
@@ -29,6 +33,7 @@ from frontend.views import hog
 from frontend.views import hogs
 
 from rest_framework import routers, serializers, viewsets
+from rest_framework.response import Response
 
 
 class HogSerializer(serializers.HyperlinkedModelSerializer):
@@ -60,9 +65,20 @@ class MeasurementSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class MeasurementFilter(FilterSet):
+
+    resolution = ChoiceFilter(
+        label='resolution',
+        choices=(('hour', 'hour'), ('day', 'day')),
+        method='noop'
+    )
+
     class Meta:
         model = Measurement
-        fields = ('location', 'hog', 'measurement_type', 'observed_at')
+        fields = ('location', 'hog', 'measurement_type',
+                  'observed_at', 'resolution')
+
+    def noop(self, queryset, name, value):
+        return queryset
 
 
 class MeasurementViewSet(viewsets.ModelViewSet):
@@ -72,6 +88,49 @@ class MeasurementViewSet(viewsets.ModelViewSet):
     filterset_class = MeasurementFilter
     page_size_query_param = 'page_size'
     max_page_size = 10000
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        resolution = request.query_params.get('resolution', None)
+        if resolution:
+            sql = open(os.path.join(
+                settings.BASE_DIR,
+                'api/sql/measurement_by_day.sql'), 'r').read()
+            conditions = ['1 = 1']
+            params = []
+            location = request.query_params.get('location', None)
+            if location:
+                conditions.append("location_id = %s")
+                params.append(location)
+            hog = request.query_params.get('hog', None)
+            if hog:
+                conditions.append("hog_id = %s")
+                params.append(hog)
+            measurement_type = request.query_params.get('measurement_type', None)
+            if measurement_type:
+                conditions.append("measurement_type = %s")
+                params.append(measurement_type)
+            observed_at = request.query_params.get('observed_at', None)
+            if observed_at:
+                if resolution:
+                    conditions.append("date_trunc(%s, observed_at) = %s")
+                    params.append(resolution)
+                else:
+                    conditions.append("observed_at = %s")
+                params.append(observed_at)
+            conditions = " AND ".join(conditions)
+            sql = sql.format(conditions=conditions)
+
+            queryset = queryset.raw(
+                sql, [resolution] + params + ['1 ' + resolution])
+
+        # page = self.paginate_queryset(queryset)
+        # if page is not None:
+        #    serializer = self.get_serializer(page, many=True)
+        #    return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 # Routers provide an easy way of automatically determining the URL conf.
