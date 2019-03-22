@@ -3,22 +3,32 @@
 $(document).ready(function() {
   window.adjusting = false;
 
-  function convertData(data) {
-    data = $.map(data['results'], function(a) {
+  function buildUrl(measurement_type, location_code, hog_code, resolution) {
+    var url = '/api/measurements/?measurement_type=' + measurement_type;
+    if (typeof location_code !== 'undefined')
+      url += '&location=' + location_code;
+    if (typeof hog_code !== 'undefined')
+      url += '&hog=' + hog_code;
+    if (typeof resolution !== 'undefined')
+      url += '&resolution=' + resolution;
+    return url;
+  }
+
+  function getMeasurements(data) {
+    data = $.map(data, function(a) {
       var d = new Date(a['observed_at']).getTime();
       var point = [[d, a['measurement']]];
       return point;
     });
+    console.log(data);
     return data;
-  };
+  }
 
-  function tempChart() {
-    var temp_url = '/api/measurements/?location=' + location_code + '&measurement_type=in_temp&page_size=1000';
-    $.getJSON(temp_url, function (data) {
+  function tempChart(resolution) {
       // Create the chart
-      Highcharts.stockChart('temp-container', {
+    return Highcharts.stockChart('temp-container', {
         rangeSelector: {
-          selected: 1
+          selected: 0  // 1 month
         },
         xAxis: {
           type: 'datetime',
@@ -32,18 +42,30 @@ $(document).ready(function() {
             }
           }
         },
+        yAxis: {
+          opposite: false,
+          title: {
+            text: "Temperature"
+          }
+        },
         title: {
           text: 'Temperatures (C)'
         },
-        series: [{
-          name: 'Temp',
-          data: convertData(data),
-          tooltip: {
-            valueDecimals: 1
-          }
-        }]
+        series: [
+          {
+            name: 'Inside temp',
+            tooltip: {
+              valueDecimals: 1
+            }
+          },
+          {
+            name: 'Outside temp',
+            tooltip: {
+              valueDecimals: 1
+            }
+          },
+        ]
       });
-    });
   }
 
   function syncExtremes(min, max, source_chart_id) {
@@ -52,7 +74,7 @@ $(document).ready(function() {
       $.each($('.measurement-chart'), function(i, chart) {
         if (chart.id !== source_chart_id) {
           chart = $(chart).highcharts();
-          var redraw = false;
+          var redraw = true;
           var animation = false;
           chart.xAxis[0].setExtremes(min, max, redraw, animation);
         }
@@ -61,12 +83,13 @@ $(document).ready(function() {
     }
   }
 
-  function weightChart(hog_code) {
-    var temp_url = '/api/measurements/?location=' + location_code + '&hog='+hog_code+'&measurement_type=weight&page_size=1000';
-    $.getJSON(temp_url, function (data) {
+  function weightChart(hog_code, resolution) {
       // Create the chart
+      var initial_min_date = new Date(max_date);
+      initial_min_date.setMonth(initial_min_date.getMonth() - 1);
       var chart_id = 'weight-container-' + hog_code;
-      Highcharts.chart(chart_id, {
+      console.log(initial_min_date, new Date(max_date));
+    return Highcharts.chart(chart_id, {
         chart: {
           type: 'column'
         },
@@ -86,7 +109,7 @@ $(document).ready(function() {
           type: 'datetime',
           startOnTick: false,
           endOnTick: false,
-          min: min_date,
+          min: initial_min_date.getTime(),
           max: max_date,
           events: {
             setExtremes: function (e) {
@@ -99,17 +122,28 @@ $(document).ready(function() {
         },
         series: [{
           name: 'Weight',
-          data: convertData(data),
           tooltip: {
             valueDecimals: 1
           }
         }]
       });
-    });
   }
 
-  tempChart();
-  $.each(hog_codes, function(i, code) {
-    weightChart(code);
+  tempchart = tempChart('day');
+  url1 = buildUrl('in_temp', location_code, undefined, 'day');
+  url2 = buildUrl('out_temp', location_code, undefined, 'day');
+  $.getJSON(url1, function (data1) {
+    $.getJSON(url2, function (data2) {
+      tempchart.series[0].setData(getMeasurements(data1));
+      tempchart.series[1].setData(getMeasurements(data2));
+    });
+  });
+
+  $.each(hog_codes, function(i, hog_code) {
+    url3 = buildUrl('weight', location_code, hog_code, 'day'),
+    $.getJSON(url3, function (data) {
+      chart = weightChart(hog_code, 'day');
+      chart.series[0].setData(getMeasurements(data));
+    });
   });
 });;
