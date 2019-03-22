@@ -119,11 +119,15 @@ class MeasurementViewSet(viewsets.ModelViewSet):
                     conditions.append("observed_at = %s")
                 params.append(observed_at)
             conditions = " AND ".join(conditions)
-            sql = sql.format(conditions=conditions)
 
+            if resolution == 'day':
+                date_type = 'date'
+            else:
+                date_type = 'timestamp'
+            sql = sql.format(conditions=conditions, date_type=date_type)
+            params = [resolution] + params + ['1 ' + resolution]
             queryset = queryset.raw(
-                sql, [resolution] + params + ['1 ' + resolution])
-
+                sql, params)
         # page = self.paginate_queryset(queryset)
         # if page is not None:
         #    serializer = self.get_serializer(page, many=True)
