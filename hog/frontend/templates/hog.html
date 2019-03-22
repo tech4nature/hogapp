@@ -5,12 +5,7 @@
 
   <div class="row">
     <div class="col">
-      <h1>Hog: {{ hog.name }}</h1>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <h2>Locations:</h2>
+      <h2>{{ hog.name }} has visited:</h2>
       <ul>
         {% for location in hog.locations %}
         <li><a href="{% url 'location' location.code %}">{{ location }}</a></li>
