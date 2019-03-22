@@ -1,7 +1,8 @@
 """Generate some sample data to play with
 """
 
-from datetime import date
+from datetime import datetime
+from datetime import timedelta
 import logging
 import random
 
@@ -46,10 +47,15 @@ def make_faker():
 NUM_BOXES = 5
 NUM_HOGS_PER_BOX = 3
 
-class Command(BaseCommand):
 
+class Command(BaseCommand):
     def handle(self, *args, **options):
         fake = make_faker()
+        start_date = datetime(2018, 10, 1, 1, tzinfo=pytz.utc)
+        end_date = datetime(2019, 4, 1, 1, tzinfo=pytz.utc)
+        seconds = list(
+            range(0,
+                  int((end_date - start_date).total_seconds())))
         with transaction.atomic():
             Measurement.objects.all().delete()
             Location.objects.all().delete()
@@ -61,10 +67,8 @@ class Command(BaseCommand):
                     name=fake.company() + " Box",
                     software_version='0.6')
                 for _ in range(0, 1800):
-                    observed_at = fake.date_time_between_dates(
-                        datetime_start=date(2018, 10, 1),
-                        datetime_end=date(2019, 4, 1),
-                        tzinfo=pytz.utc)
+                    observed_at = start_date + timedelta(
+                        seconds=random.choice(seconds))
                     out_temp = fake.temperature(observed_at)
                     Measurement.objects.create(
                         location=box1,
@@ -77,17 +81,16 @@ class Command(BaseCommand):
                         location=box1,
                         measurement_type='in_temp',
                         measurement=in_temp,
-                        observed_at=observed_at)
+                        observed_at=observed_at+timedelta(
+                            milliseconds=500))
                 for hog in range(0, NUM_HOGS_PER_BOX):
                     hog1, _ = Hog.objects.get_or_create(
                         code='hog-' + fake.ean13(),
                         name=fake.name())
                     for _ in range(0, random.choice(range(5, 100))):
                         # A random number of visits where each hog gets weighed
-                        observed_at = fake.date_time_between_dates(
-                            datetime_start=date(2018, 10, 1),
-                            datetime_end=date(2019, 4, 1),
-                            tzinfo=pytz.utc)
+                        observed_at = start_date + timedelta(
+                            seconds=random.choice(seconds))
                         weight = fake.weight(observed_at)
                         Measurement.objects.create(
                             hog=hog1,
