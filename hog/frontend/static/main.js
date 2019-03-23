@@ -20,13 +20,15 @@ $(document).ready(function() {
       var point = [[d, a['measurement']]];
       return point;
     });
-    console.log(data);
     return data;
   }
 
   function tempChart() {
-      // Create the chart
+    // Create the chart
     return Highcharts.stockChart('temp-container', {
+        chart: {
+          type: 'column'
+        },
         rangeSelector: {
           selected: 0  // 1 month
         },
@@ -71,13 +73,34 @@ $(document).ready(function() {
   function syncExtremes(min, max, source_chart_id) {
     if (!window.adjusting) {
       window.adjusting = true;
+      // adjust x-axis  resolution we get from server based on zoom level
       $.each($('.measurement-chart'), function(i, chart) {
+        $chart = $(chart);
+        hc_chart = $(chart).highcharts();
+        var update_data = false;
+        var hour = 60 * 60 * 1000;
+        var one_day = 24 * 60 * 60 * 1000;
+        var three_days = 3 * 24 * 60 * 60 * 1000;
+        if ($chart.data('resolution') == 'day' && (max - min) < three_days) {
+          $chart.data('resolution', 'hour');
+          update_data = true;
+        } else if ($chart.data('resolution') == 'hour' && (max - min) >= three_days) {
+          $chart.data('resolution', 'day');
+          update_data = true;
+        }
+        if (update_data) {
+          updateChart(
+            hc_chart,
+            $chart.data('metric'),
+            $chart.data('resolution'),
+            $chart.data('location_code'),
+            $chart.data('hog_code'));
+        }
+        // make all other charts match the same zoom level
         if (chart.id !== source_chart_id) {
-          chart = $(chart).highcharts();
           var redraw = true;
           var animation = false;
-          // XXX - if extremes are sufficiently low,
-          chart.xAxis[0].setExtremes(min, max, redraw, animation);
+          hc_chart.xAxis[0].setExtremes(min, max, redraw, animation);
         }
       });
       window.adjusting = false;
@@ -133,6 +156,7 @@ $(document).ready(function() {
   function setSeriesData(chart, url, series_index) {
     $.getJSON(url, function (data) {
       chart.series[series_index].setData(getMeasurements(data));
+      //chart.redraw();
     });
   }
 
@@ -142,6 +166,11 @@ $(document).ready(function() {
     if (metric === 'out_temp')
       series_index = 1;
     setSeriesData(chart, url, series_index);
+    $chart = $(chart.container).parent();
+    $chart.data('metric', metric);
+    $chart.data('resolution', resolution);
+    $chart.data('location_code', location_code);
+    $chart.data('hog_code', hog_code);
   }
 
   chart = tempChart();
