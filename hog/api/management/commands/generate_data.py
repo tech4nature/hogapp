@@ -5,9 +5,12 @@ from datetime import datetime
 from datetime import timedelta
 import logging
 import random
+import os
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.core.files import File
+from django.conf import settings
 
 from api.models import Location
 from api.models import Hog
@@ -56,6 +59,8 @@ class Command(BaseCommand):
         seconds = list(
             range(0,
                   int((end_date - start_date).total_seconds())))
+        f = open(os.path.join(settings.MEDIA_ROOT, 'sample_file.jpg'), 'r')
+        fake_video = File(f)
         with transaction.atomic():
             Measurement.objects.all().delete()
             Location.objects.all().delete()
@@ -97,4 +102,10 @@ class Command(BaseCommand):
                             location=box1,
                             measurement_type='weight',
                             measurement=weight,
+                            observed_at=observed_at)
+                        Measurement.objects.create(
+                            hog=hog1,
+                            location=box1,
+                            measurement_type='video',
+                            video=fake_video,
                             observed_at=observed_at)

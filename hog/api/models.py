@@ -35,6 +35,7 @@ class Location(models.Model):
 
 class Measurement(models.Model):
     MEASUREMENT_TYPE_CHOICES = [
+        ('video', 'video'),
         ('weight', 'weight'),
         ('in_temp', 'in_temp'),
         ('out_temp', 'out_temp')
@@ -47,7 +48,8 @@ class Measurement(models.Model):
         max_length=10,
         choices=MEASUREMENT_TYPE_CHOICES,
         db_index=True)
-    measurement = models.FloatField()
+    measurement = models.FloatField(blank=True, null=True)
+    video = models.FileField(blank=True, null=True)
     observed_at = models.DateTimeField(db_index=True)
 
     def __unicode__(self):

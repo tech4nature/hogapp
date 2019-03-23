@@ -34,6 +34,8 @@ from frontend.views import hogs
 
 from rest_framework import routers, serializers, viewsets
 from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
+from rest_framework.parsers import FileUploadParser
 
 
 class HogSerializer(serializers.HyperlinkedModelSerializer):
@@ -59,9 +61,10 @@ class LocationViewSet(viewsets.ModelViewSet):
 
 
 class MeasurementSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = Measurement
-        fields = ('measurement_type', 'measurement', 'observed_at')
+        fields = ('measurement_type', 'measurement', 'observed_at', 'video')
 
 
 class MeasurementFilter(FilterSet):
@@ -88,10 +91,12 @@ class MeasurementViewSet(viewsets.ModelViewSet):
     filterset_class = MeasurementFilter
     page_size_query_param = 'page_size'
     max_page_size = 10000
+    parser_class = (FileUploadParser,)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         resolution = request.query_params.get('resolution', None)
+        measurement_type = request.query_params.get('measurement_type', None)
         if resolution:
             sql = open(os.path.join(
                 settings.BASE_DIR,
@@ -106,7 +111,6 @@ class MeasurementViewSet(viewsets.ModelViewSet):
             if hog:
                 conditions.append("hog_id = %s")
                 params.append(hog)
-            measurement_type = request.query_params.get('measurement_type', None)
             if measurement_type:
                 conditions.append("measurement_type = %s")
                 params.append(measurement_type)
@@ -125,14 +129,13 @@ class MeasurementViewSet(viewsets.ModelViewSet):
             else:
                 date_type = 'timestamp'
             sql = sql.format(conditions=conditions, date_type=date_type)
-            params = [resolution] + params + ['1 ' + resolution]
+            params = [resolution] + params + ['1 ' + resolution, measurement_type]
             queryset = queryset.raw(
                 sql, params)
         # page = self.paginate_queryset(queryset)
         # if page is not None:
         #    serializer = self.get_serializer(page, many=True)
         #    return self.get_paginated_response(serializer.data)
-
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 

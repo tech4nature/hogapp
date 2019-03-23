@@ -73,25 +73,23 @@ $(document).ready(function() {
   function syncExtremes(min, max, source_chart_id) {
     if (!window.adjusting) {
       window.adjusting = true;
-      // adjust x-axis  resolution we get from server based on zoom level
+      // adjust x-axis resolution we get from server based on zoom level
       $.each($('.measurement-chart'), function(i, chart) {
         $chart = $(chart);
         hc_chart = $(chart).highcharts();
         var update_data = false;
         var hour = 60 * 60 * 1000;
         var one_day = 24 * 60 * 60 * 1000;
-        var three_days = 3 * 24 * 60 * 60 * 1000;
-        if ($chart.data('resolution') == 'day' && (max - min) < three_days) {
+        if ($chart.data('resolution') == 'day' && (max - min) < 7 * one_day) {
           $chart.data('resolution', 'hour');
           update_data = true;
-        } else if ($chart.data('resolution') == 'hour' && (max - min) >= three_days) {
+        } else if ($chart.data('resolution') == 'hour' && (max - min) >= 7 * one_day) {
           $chart.data('resolution', 'day');
           update_data = true;
         }
         if (update_data) {
           updateChart(
-            hc_chart,
-            $chart.data('metric'),
+            $chart.attr('id'),
             $chart.data('resolution'),
             $chart.data('location_code'),
             $chart.data('hog_code'));
@@ -108,11 +106,11 @@ $(document).ready(function() {
   }
 
   function weightChart(hog_code) {
-      // Create the chart
-      var initial_min_date = new Date(max_date);
-      initial_min_date.setMonth(initial_min_date.getMonth() - 1);
-      var chart_id = 'weight-container-' + hog_code;
-      console.log(initial_min_date, new Date(max_date));
+    // Create the chart
+    var initial_min_date = new Date(max_date);
+    initial_min_date.setMonth(initial_min_date.getMonth() - 1);
+    var chart_id = 'weight-container-' + hog_code;
+    console.log(initial_min_date, new Date(max_date));
     return Highcharts.chart(chart_id, {
         chart: {
           type: 'column'
@@ -160,24 +158,29 @@ $(document).ready(function() {
     });
   }
 
-  function updateChart(chart, metric, resolution, location_code, hog_code) {
-    var url = buildUrl(metric, resolution, location_code, hog_code);
-    var series_index = 0;
-    if (metric === 'out_temp')
-      series_index = 1;
-    setSeriesData(chart, url, series_index);
-    $chart = $(chart.container).parent();
-    $chart.data('metric', metric);
-    $chart.data('resolution', resolution);
-    $chart.data('location_code', location_code);
-    $chart.data('hog_code', hog_code);
+  function updateChart(chart_id, resolution, location_code, hog_code) {
+    var metrics;
+    if (chart_id == 'temp-container') {
+      metrics = ['in_temp', 'out_temp'];
+    } else if (chart_id.lastIndexOf('weight-container', 0) === 0) {
+      metrics = ['weight'];
+    }
+    $chart = $('#' + chart_id);
+    $chart.data('metrics', metrics);
+    $.each(metrics, function(i, metric) {
+      var url = buildUrl(metric, resolution, location_code, hog_code);
+      var series_index = 0;
+      setSeriesData($chart.highcharts(), url, i);
+      $chart.data('resolution', resolution);
+      $chart.data('location_code', location_code);
+      $chart.data('hog_code', hog_code);
+    });
   }
 
   chart = tempChart();
-  updateChart(chart, 'in_temp', 'day', location_code);
-  updateChart(chart, 'out_temp', 'day', location_code);
+  updateChart('temp-container', 'day', location_code);
   $.each(hog_codes, function(i, hog_code) {
-    chart = weightChart(hog_code, 'day');
-    updateChart(chart, 'weight', 'day', location_code, hog_code);
+    chart = weightChart(hog_code);
+    updateChart('weight-container-' + hog_code, 'day', location_code, hog_code);
   });
 });;
