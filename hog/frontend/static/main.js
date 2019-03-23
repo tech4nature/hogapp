@@ -24,7 +24,7 @@ $(document).ready(function() {
     return data;
   }
 
-  function tempChart(resolution) {
+  function tempChart() {
       // Create the chart
     return Highcharts.stockChart('temp-container', {
         rangeSelector: {
@@ -65,7 +65,7 @@ $(document).ready(function() {
             }
           },
         ]
-      });
+    });
   }
 
   function syncExtremes(min, max, source_chart_id) {
@@ -76,6 +76,7 @@ $(document).ready(function() {
           chart = $(chart).highcharts();
           var redraw = true;
           var animation = false;
+          // XXX - if extremes are sufficiently low,
           chart.xAxis[0].setExtremes(min, max, redraw, animation);
         }
       });
@@ -83,7 +84,7 @@ $(document).ready(function() {
     }
   }
 
-  function weightChart(hog_code, resolution) {
+  function weightChart(hog_code) {
       // Create the chart
       var initial_min_date = new Date(max_date);
       initial_min_date.setMonth(initial_min_date.getMonth() - 1);
@@ -129,29 +130,25 @@ $(document).ready(function() {
       });
   }
 
-  function setTempData(tempchart, url1, url2) {
-    $.getJSON(url1, function (data1) {
-      $.getJSON(url2, function (data2) {
-        tempchart.series[0].setData(getMeasurements(data1));
-        tempchart.series[1].setData(getMeasurements(data2));
-      });
-    });
-  }
-
-  function setWeightData(weightchart, url) {
+  function setSeriesData(chart, url, series_index) {
     $.getJSON(url, function (data) {
-      weightchart.series[0].setData(getMeasurements(data));
+      chart.series[series_index].setData(getMeasurements(data));
     });
   }
 
-  tempchart = tempChart('day');
-  url1 = buildUrl('in_temp', 'day', location_code);
-  url2 = buildUrl('out_temp', 'day', location_code);
-    setTempData(tempchart, url1, url2);
+  function updateChart(chart, metric, resolution, location_code, hog_code) {
+    var url = buildUrl(metric, resolution, location_code, hog_code);
+    var series_index = 0;
+    if (metric === 'out_temp')
+      series_index = 1;
+    setSeriesData(chart, url, series_index);
+  }
 
+  chart = tempChart();
+  updateChart(chart, 'in_temp', 'day', location_code);
+  updateChart(chart, 'out_temp', 'day', location_code);
   $.each(hog_codes, function(i, hog_code) {
     chart = weightChart(hog_code, 'day');
-    url = buildUrl('weight', 'day', location_code, hog_code),
-    setWeightData(chart, url);
+    updateChart(chart, 'weight', 'day', location_code, hog_code);
   });
 });;
