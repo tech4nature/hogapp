@@ -3,7 +3,7 @@
 $(document).ready(function() {
   window.adjusting = false;
 
-  function buildUrl(measurement_type, location_code, hog_code, resolution) {
+  function buildUrl(measurement_type, resolution, location_code, hog_code) {
     var url = '/api/measurements/?measurement_type=' + measurement_type;
     if (typeof location_code !== 'undefined')
       url += '&location=' + location_code;
@@ -129,21 +129,29 @@ $(document).ready(function() {
       });
   }
 
-  tempchart = tempChart('day');
-  url1 = buildUrl('in_temp', location_code, undefined, 'day');
-  url2 = buildUrl('out_temp', location_code, undefined, 'day');
-  $.getJSON(url1, function (data1) {
-    $.getJSON(url2, function (data2) {
-      tempchart.series[0].setData(getMeasurements(data1));
-      tempchart.series[1].setData(getMeasurements(data2));
+  function setTempData(tempchart, url1, url2) {
+    $.getJSON(url1, function (data1) {
+      $.getJSON(url2, function (data2) {
+        tempchart.series[0].setData(getMeasurements(data1));
+        tempchart.series[1].setData(getMeasurements(data2));
+      });
     });
-  });
+  }
+
+  function setWeightData(weightchart, url) {
+    $.getJSON(url, function (data) {
+      weightchart.series[0].setData(getMeasurements(data));
+    });
+  }
+
+  tempchart = tempChart('day');
+  url1 = buildUrl('in_temp', 'day', location_code);
+  url2 = buildUrl('out_temp', 'day', location_code);
+    setTempData(tempchart, url1, url2);
 
   $.each(hog_codes, function(i, hog_code) {
-    url3 = buildUrl('weight', location_code, hog_code, 'day'),
-    $.getJSON(url3, function (data) {
-      chart = weightChart(hog_code, 'day');
-      chart.series[0].setData(getMeasurements(data));
-    });
+    chart = weightChart(hog_code, 'day');
+    url = buildUrl('weight', 'day', location_code, hog_code),
+    setWeightData(chart, url);
   });
 });;
