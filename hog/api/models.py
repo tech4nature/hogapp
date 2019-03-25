@@ -61,13 +61,12 @@ class Measurement(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk is None:
-            if self.hog_id:
-                try:
-                    self.hog
-                except Hog.DoesNotExist:
-                    fake = Faker()
-                    self.hog = Hog.objects.create(
-                        code=self.hog_id, name=fake.name())
+            try:
+                self.hog
+            except Hog.DoesNotExist:
+                fake = Faker()
+                self.hog = Hog.objects.create(
+                    code=self.hog_id, name=fake.name())
         super(Measurement, self).save(*args, **kwargs)
 
     class Meta:
