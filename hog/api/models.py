@@ -49,7 +49,7 @@ class Measurement(models.Model):
         choices=MEASUREMENT_TYPE_CHOICES,
         db_index=True)
     measurement = models.FloatField(blank=True, null=True)
-    video = models.FileField(blank=True, null=True)
+    video = models.FileField(blank=True, null=True, upload_to='videos')
     observed_at = models.DateTimeField(db_index=True)
 
     def __unicode__(self):

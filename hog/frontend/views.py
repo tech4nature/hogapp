@@ -37,6 +37,6 @@ def location(request, code):
 
 def hog(request, code):
     hog = Hog.objects.get(code=code)
-    context = {'locations': locations,
-               'hog': hog}
+    videos = Measurement.objects.filter(measurement_type='video', hog=hog)
+    context = {'hog': hog, 'video_measurements': videos}
     return render(request, 'hog.html', context=context)

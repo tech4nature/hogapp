@@ -14,7 +14,23 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Absolute filesystem path to the directory that will hold user-uploaded files.
+# '/home/seb/Code/hogapp/hog/media'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# home/seb/Code/hogapp/hog/media/sample_file_jxKuhu3.jpg
+# URL that handles the media served from MEDIA_ROOT, used for managing
+# stored files. It must end in a slash if set to a non-empty
+# value. You will need to configure these files to be served in both
+# development and production environments.
+#
+# If you want to use {{ MEDIA_URL }} in your templates, add
+# 'django.template.context_processors.media' in the
+# 'context_processors' option of TEMPLATES.
+#
+# Example: "http://media.example.com/"
+MEDIA_URL = '/media/'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/

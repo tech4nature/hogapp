@@ -59,7 +59,7 @@ class Command(BaseCommand):
         seconds = list(
             range(0,
                   int((end_date - start_date).total_seconds())))
-        f = open(os.path.join(settings.MEDIA_ROOT, 'sample_file.jpg'), 'r')
+        f = open(os.path.join(settings.MEDIA_ROOT, 'sample_file.mp4'), 'rb')
         fake_video = File(f)
         with transaction.atomic():
             Measurement.objects.all().delete()
@@ -103,9 +103,9 @@ class Command(BaseCommand):
                             measurement_type='weight',
                             measurement=weight,
                             observed_at=observed_at)
-                        Measurement.objects.create(
+                        m = Measurement.objects.create(
                             hog=hog1,
                             location=box1,
                             measurement_type='video',
-                            video=fake_video,
                             observed_at=observed_at)
+                        m.video.save('sample_video.mp4', fake_video)

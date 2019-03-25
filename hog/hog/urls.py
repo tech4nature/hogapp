@@ -19,6 +19,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include
 from django.urls import path
+from django.conf.urls.static import static
 
 from django_filters import FilterSet
 from django_filters import ChoiceFilter
@@ -155,4 +156,4 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('location/<slug:code>', location, name='location'),
     path('hog/<slug:code>', hog, name='hog'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
