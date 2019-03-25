@@ -64,6 +64,17 @@ class LocationViewSet(viewsets.ModelViewSet):
 
 
 class MeasurementSerializer(serializers.HyperlinkedModelSerializer):
+    hog_id = serializers.CharField(required=False)
+    location_id = serializers.CharField(required=True)
+
+    def validate(self, data):
+        """
+        Check that weight and video measurements always include a hog
+        """
+        if data['measurement_type'] in ['video', 'weight']:
+            if 'hog_id' not in data:
+                raise serializers.ValidationError("You must provide a hog_id")
+        return data
 
     class Meta:
         model = Measurement
