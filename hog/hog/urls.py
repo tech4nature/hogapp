@@ -38,6 +38,8 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser
 
+from rest_framework_swagger.views import get_swagger_view
+
 
 class HogSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -156,4 +158,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('location/<slug:code>', location, name='location'),
     path('hog/<slug:code>', hog, name='hog'),
+    path(r'docs/', get_swagger_view(title='Hog API')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

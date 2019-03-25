@@ -4,3 +4,4 @@ markdown       # Markdown support for the browsable API.
 django-filter  # Filtering support for djangorestframework
 faker
 psycopg2
+django-rest-swagger
