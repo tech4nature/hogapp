@@ -2,7 +2,7 @@
 // https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/compare/
 $(document).ready(function() {
   window.adjusting = false;
-
+  window.minRange = 3 * 24 * 60 * 60 * 1000;
   function buildUrl(measurement_type, resolution, location_code, hog_code) {
     var url = '/api/measurements/?measurement_type=' + measurement_type;
     if (typeof location_code !== 'undefined')
@@ -34,6 +34,7 @@ $(document).ready(function() {
         },
         xAxis: {
           type: 'datetime',
+          minRange: window.minRange,
           startOnTick: false,
           endOnTick: false,
           min: min_date,
@@ -71,7 +72,7 @@ $(document).ready(function() {
   }
 
   function syncExtremes(min, max, source_chart_id) {
-    if (!window.adjusting) {
+    if (!window.adjusting && (max - min) > window.minRange) {
       window.adjusting = true;
       // adjust x-axis resolution we get from server based on zoom level
       $.each($('.measurement-chart'), function(i, chart) {
@@ -131,7 +132,7 @@ $(document).ready(function() {
           type: 'datetime',
           startOnTick: false,
           endOnTick: false,
-          min: initial_min_date.getTime(),
+          min: min_date,
           max: max_date,
           events: {
             setExtremes: function (e) {
@@ -178,9 +179,9 @@ $(document).ready(function() {
   }
 
   chart = tempChart();
-  updateChart('temp-container', 'day', location_code);
+  updateChart('temp-container', initial_resolution, location_code);
   $.each(hog_codes, function(i, hog_code) {
     chart = weightChart(hog_code);
-    updateChart('weight-container-' + hog_code, 'day', location_code, hog_code);
+    updateChart('weight-container-' + hog_code, initial_resolution, location_code, hog_code);
   });
 });;

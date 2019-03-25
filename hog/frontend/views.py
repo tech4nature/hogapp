@@ -25,13 +25,25 @@ def hogs(request):
 def location(request, code):
     location = Location.objects.get(code=code)
     measurements = Measurement.objects.filter(location=location)
-    min_date = measurements.aggregate(
-        Min('observed_at'))['observed_at__min'].timestamp() * 1000
-    max_date = measurements.aggregate(
-        Max('observed_at'))['observed_at__max'].timestamp() * 1000
+    num_measurements = measurements.count()
+    initial_resolution = 'day'
+    max_date = min_date = None
+    if num_measurements:
+        min_date = measurements.aggregate(
+            Min('observed_at'))['observed_at__min'].timestamp() * 1000
+        max_date = measurements.aggregate(
+            Max('observed_at'))['observed_at__max'].timestamp() * 1000
+        min_range = 3 * 24 * 60 * 60 * 1000
+        if (max_date - min_date) < min_range:
+            midpoint = min_date + (max_date - min_date)/2
+            min_date = midpoint - min_range / 2
+            max_date = midpoint + min_range / 2
+            initial_resolution = 'hour'
     context = {'location': location,
                'min_date': min_date,
-               'max_date': max_date}
+               'max_date': max_date,
+               'num_measurements': num_measurements,
+               'initial_resolution': initial_resolution}
     return render(request, 'location.html', context=context)
 
 
