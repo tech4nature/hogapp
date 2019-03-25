@@ -1,4 +1,5 @@
 from django.db import models
+from faker import Faker
 
 
 class Hog(models.Model):
@@ -57,6 +58,17 @@ class Measurement(models.Model):
             self.measurement_type,
             self.location,
             self.measurement)
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            if self.hog_id:
+                try:
+                    self.hog
+                except Hog.DoesNotExist:
+                    fake = Faker()
+                    self.hog = Hog.objects.create(
+                        code=self.hog_id, name=fake.name())
+        super(Measurement, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['observed_at']

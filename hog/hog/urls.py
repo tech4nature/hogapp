@@ -67,7 +67,8 @@ class MeasurementSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Measurement
-        fields = ('measurement_type', 'measurement', 'observed_at', 'video')
+        fields = ('measurement_type', 'measurement',
+                  'observed_at', 'video', 'hog_id', 'location_id')
 
 
 class MeasurementFilter(FilterSet):
@@ -132,7 +133,10 @@ class MeasurementViewSet(viewsets.ModelViewSet):
             else:
                 date_type = 'timestamp'
             sql = sql.format(conditions=conditions, date_type=date_type)
-            params = [resolution] + params + ['1 ' + resolution, measurement_type]
+            params = [resolution] + params + ['1 ' + resolution]
+            params.append(hog)
+            params.append(location)
+            params.append(measurement_type)
             queryset = queryset.raw(
                 sql, params)
         # page = self.paginate_queryset(queryset)

@@ -23,6 +23,8 @@ SELECT m.id,
        all_days.date_increment::timestamp AS observed_at,
        m.measurement,
        m.video,
+       %s AS hog_id,
+       %s AS location_id,
        COALESCE(m.measurement_type, %s) AS measurement_type
 FROM measurements AS m
 RIGHT JOIN all_days ON m.observed_at_trunc = all_days.date_increment
