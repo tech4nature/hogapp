@@ -33,10 +33,12 @@ from frontend.views import locations
 from frontend.views import hog
 from frontend.views import hogs
 
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers, serializers, viewsets, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import FileUploadParser
+from rest_framework.parsers import MultiPartParser
 
 from rest_framework_swagger.views import get_swagger_view
 
@@ -63,7 +65,7 @@ class LocationViewSet(viewsets.ModelViewSet):
     serializer_class = LocationSerializer
 
 
-class MeasurementSerializer(serializers.HyperlinkedModelSerializer):
+class MeasurementSerializer(serializers.ModelSerializer):
     hog_id = serializers.CharField(required=False)
     location_id = serializers.CharField(required=True)
 
@@ -78,8 +80,15 @@ class MeasurementSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Measurement
-        fields = ('measurement_type', 'measurement',
+        fields = ('id', 'measurement_type', 'measurement',
                   'observed_at', 'video', 'hog_id', 'location_id')
+        read_only_fields = ('video', )
+
+
+class MeasurementVideoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Measurement
+        fields = ['video']
 
 
 class MeasurementFilter(FilterSet):
@@ -106,9 +115,28 @@ class MeasurementViewSet(viewsets.ModelViewSet):
     filterset_class = MeasurementFilter
     page_size_query_param = 'page_size'
     max_page_size = 10000
-    parser_class = (FileUploadParser,)
+
+    @action(
+        detail=True,
+        methods=['PUT'],
+        serializer_class=MeasurementVideoSerializer,
+        parser_classes=[MultiPartParser],
+    )
+    def video(self, request, pk):
+        obj = self.get_object()
+        serializer = self.serializer_class(obj, data=request.data,
+                                           partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
 
     def list(self, request, *args, **kwargs):
+        """A custom `list` action that optionally aggregates measurements to
+        hours or days
+
+        """
         queryset = self.filter_queryset(self.get_queryset())
         resolution = request.query_params.get('resolution', None)
         measurement_type = request.query_params.get('measurement_type', None)
