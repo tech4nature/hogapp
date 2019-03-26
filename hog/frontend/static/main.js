@@ -57,12 +57,14 @@ $(document).ready(function() {
         series: [
           {
             name: 'Inside temp',
+            color: '#28a745',
             tooltip: {
               valueDecimals: 1
             }
           },
           {
             name: 'Outside temp',
+            color: '#17a2b8',
             tooltip: {
               valueDecimals: 1
             }
@@ -145,6 +147,7 @@ $(document).ready(function() {
         },
         series: [{
           name: 'Weight',
+          color: '#ffc107',
           tooltip: {
             valueDecimals: 1
           }
