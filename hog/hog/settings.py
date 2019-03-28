@@ -36,7 +36,7 @@ MEDIA_URL = '/media/'
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'k8g*$)^s!ur^866aaz80k@xmrve$1c)^t1o3(scnh#)$r4-nj@'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -98,8 +98,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'hog',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASS'],
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }

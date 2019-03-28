@@ -5,22 +5,25 @@ Django app for exploring data gathered about hedgehogs
 
 Requires python3, and a postgres server
 
-## Set up postgres and database
-
-```sh
-apt-get install postgresql-10
-sudo su - postgres
-createuser root -W
-createdb hog -O root
-```
-
 ## Create environment
 
 Clone the repo
 
 ```sh
 git clone git@github.com:tech4nature/hogapp.git
-cd hogapp/
+cd hogapp/hog/
+cp environment-sample .env
+```
+
+Now edit `.env`, and continue
+
+## Set up postgres and database
+
+```sh
+apt-get install postgresql-10
+sudo su - postgres
+createuser <DB_USER from .dev> -W
+createdb hog -O <DB_USER from .dev>
 ```
 
 ### Set up a python3 virtualenv
@@ -31,6 +34,7 @@ mkvirtualenv -p /usr/bin/python3 hogapp
 pip install pip-tools
 pip-sync
 ```
+
 
 ## Set up admin user
 

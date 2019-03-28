@@ -5,3 +5,4 @@ django-filter  # Filtering support for djangorestframework
 faker
 psycopg2
 django-rest-swagger
+django-dotenv
