@@ -53,11 +53,11 @@ class Measurement(models.Model):
     video = models.FileField(blank=True, null=True, upload_to='videos')
     observed_at = models.DateTimeField(db_index=True)
 
-    def __unicode__(self):
-        return "Measurement {} at {}: {}".format(
+    def __str__(self):
+        return "{}:{} at {}".format(
             self.measurement_type,
-            self.location,
-            self.measurement)
+            self.measurement,
+            self.location)
 
     def save(self, *args, **kwargs):
         if self.pk is None:
