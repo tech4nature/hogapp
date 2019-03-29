@@ -34,7 +34,8 @@
     {{ video_measurement.observed_at }}
   </div>
   <div class="col">
-    <video id="my-video" class="video-js" controls preload="auto" width="640" height="264"
+    <div class="video-container">
+    <video id="my-video" class="video-js vjs-fill" controls preload="auto" width="640" height="264"
            poster="" data-setup="{}">
       <source src="{{ video_measurement.video.url }}" type="video/mp4">
         <p class="vjs-no-js">
@@ -42,6 +43,7 @@
           <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
         </p>
     </video>
+    </div>
   </div>
 </div>
 {% endfor %}
