@@ -18,6 +18,7 @@ from api.models import Measurement
 
 from faker.providers import BaseProvider
 from faker import Faker
+import numpy as np
 import pytz
 
 
@@ -25,14 +26,17 @@ def make_faker():
     fake = Faker()
 
     class Provider(BaseProvider):
+        days = 365
+        x = np.arange(days)
+        TEMPS = (np.sin(2 * np.pi * (x/days)) + 1) * 13
+
         def temperature(self, date_time):
-            month = date_time.month
-            month_baselines = [3, 6, 8, 10, 18, 20,
-                               20, 18, 14, 10, 6, 4]
-            baseline = month_baselines[month-1] * 10
-            return random.choice(
-                range(
-                    baseline, baseline + 5)) / 10.0
+            day_of_year = date_time.timetuple().tm_yday
+            # shift sine wave 0.25 to R to make peak in middle of year
+            day_of_year = (day_of_year + 365*0.75) % 365
+            baseline = Provider.TEMPS[int(day_of_year)-1]
+            jitter = random.choice(range(-30, 30)) / 10
+            return baseline + jitter
 
         def weight(self, date_time):
             month = date_time.month
@@ -47,7 +51,7 @@ def make_faker():
     return fake
 
 
-NUM_BOXES = 5
+NUM_BOXES = 4
 NUM_HOGS_PER_BOX = 3
 
 

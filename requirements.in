@@ -6,3 +6,4 @@ faker
 psycopg2
 django-rest-swagger
 django-dotenv
+numpy
