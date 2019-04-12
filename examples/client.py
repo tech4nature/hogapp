@@ -55,10 +55,12 @@ def upload_video(location_id, hog_id, video_path):
 
 
 if __name__ == '__main__':
-    username = input("username:")
-    password = input("password:")
-    AUTH = HTTPBasicAuth(username, password)
-
+    if not AUTH:
+        username = input("username:")
+        password = input("password:")
+        AUTH = HTTPBasicAuth(username, password)
+    else:
+        AUTH = HTTPBasicAuth(*AUTH)
     print("Making a location:")
     print(create_location("myplace", "My place"))
     print()
