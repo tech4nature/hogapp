@@ -131,7 +131,6 @@ class MeasurementViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-
     def list(self, request, *args, **kwargs):
         """A custom `list` action that optionally aggregates measurements to
         hours or days
