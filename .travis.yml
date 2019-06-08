@@ -1,0 +1,19 @@
+language: python
+python:
+- '3.6'
+env:
+  global:
+    - DB_USER=postgres
+    - DB_PASS=
+    - DJANGO_SECRET_KEY=kjaslj
+addons:
+  postgresql: "9.6"
+install:
+- pip install -r requirements.txt
+before_script:
+- psql -c 'create database hog_test;' -U postgres
+script:
+- cd hog && python manage.py test
+notifications:
+  email:
+  - seb.bacon@gmail.com
