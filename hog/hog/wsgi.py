@@ -13,9 +13,9 @@ from django.core.wsgi import get_wsgi_application
 
 import dotenv
 
-dotenv.read_dotenv('/home/seb/hogapp/hog/.env')
+dotenv.read_dotenv("/home/seb/hogapp/hog/.env")
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hog.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hog.settings")
 
 application = get_wsgi_application()

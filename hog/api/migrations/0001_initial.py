@@ -8,35 +8,68 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Box',
+            name="Box",
             fields=[
-                ('code', models.CharField(max_length=80, primary_key=True, serialize=False)),
-                ('name', models.CharField(blank=True, max_length=200, null=True)),
-                ('software_version', models.CharField(blank=True, max_length=5, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "code",
+                    models.CharField(max_length=80, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(blank=True, max_length=200, null=True)),
+                (
+                    "software_version",
+                    models.CharField(blank=True, max_length=5, null=True),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Hog',
+            name="Hog",
             fields=[
-                ('code', models.CharField(max_length=80, primary_key=True, serialize=False)),
-                ('name', models.CharField(blank=True, max_length=200, null=True)),
+                (
+                    "code",
+                    models.CharField(max_length=80, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(blank=True, max_length=200, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Measurement',
+            name="Measurement",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('measurement_type', models.CharField(choices=[('weight', 'weight'), ('temp', 'temp')], db_index=True, max_length=10)),
-                ('measurement', models.FloatField()),
-                ('observed_at', models.DateTimeField(db_index=True)),
-                ('box', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='api.Box')),
-                ('hog', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='api.Hog')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "measurement_type",
+                    models.CharField(
+                        choices=[("weight", "weight"), ("temp", "temp")],
+                        db_index=True,
+                        max_length=10,
+                    ),
+                ),
+                ("measurement", models.FloatField()),
+                ("observed_at", models.DateTimeField(db_index=True)),
+                (
+                    "box",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="api.Box"
+                    ),
+                ),
+                (
+                    "hog",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="api.Hog"
+                    ),
+                ),
             ],
         ),
     ]

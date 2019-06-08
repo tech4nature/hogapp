@@ -5,19 +5,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0002_auto_20190317_1718'),
-    ]
+    dependencies = [("api", "0002_auto_20190317_1718")]
 
     operations = [
         migrations.AddField(
-            model_name='measurement',
-            name='video',
-            field=models.FileField(blank=True, null=True, upload_to=''),
+            model_name="measurement",
+            name="video",
+            field=models.FileField(blank=True, null=True, upload_to=""),
         ),
         migrations.AlterField(
-            model_name='measurement',
-            name='measurement',
+            model_name="measurement",
+            name="measurement",
             field=models.FloatField(blank=True, null=True),
         ),
     ]

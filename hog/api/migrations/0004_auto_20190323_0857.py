@@ -5,14 +5,21 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0003_auto_20190323_0845'),
-    ]
+    dependencies = [("api", "0003_auto_20190323_0845")]
 
     operations = [
         migrations.AlterField(
-            model_name='measurement',
-            name='measurement_type',
-            field=models.CharField(choices=[('video', 'video'), ('weight', 'weight'), ('in_temp', 'in_temp'), ('out_temp', 'out_temp')], db_index=True, max_length=10),
-        ),
+            model_name="measurement",
+            name="measurement_type",
+            field=models.CharField(
+                choices=[
+                    ("video", "video"),
+                    ("weight", "weight"),
+                    ("in_temp", "in_temp"),
+                    ("out_temp", "out_temp"),
+                ],
+                db_index=True,
+                max_length=10,
+            ),
+        )
     ]

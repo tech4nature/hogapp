@@ -46,7 +46,7 @@ from rest_framework_swagger.views import get_swagger_view
 class HogSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Hog
-        fields = ('code', 'name')
+        fields = ("code", "name")
 
 
 class HogViewSet(viewsets.ModelViewSet):
@@ -57,7 +57,7 @@ class HogViewSet(viewsets.ModelViewSet):
 class LocationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Location
-        fields = ('code', 'name', 'created_at', 'software_version')
+        fields = ("code", "name", "created_at", "software_version")
 
 
 class LocationViewSet(viewsets.ModelViewSet):
@@ -73,36 +73,40 @@ class MeasurementSerializer(serializers.ModelSerializer):
         """
         Check that weight and video measurements always include a hog
         """
-        if data['measurement_type'] in ['video', 'weight']:
-            if 'hog_id' not in data:
+        if data["measurement_type"] in ["video", "weight"]:
+            if "hog_id" not in data:
                 raise serializers.ValidationError("You must provide a hog_id")
         return data
 
     class Meta:
         model = Measurement
-        fields = ('id', 'measurement_type', 'measurement',
-                  'observed_at', 'video', 'hog_id', 'location_id')
-        read_only_fields = ('video', )
+        fields = (
+            "id",
+            "measurement_type",
+            "measurement",
+            "observed_at",
+            "video",
+            "hog_id",
+            "location_id",
+        )
+        read_only_fields = ("video",)
 
 
 class MeasurementVideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Measurement
-        fields = ['video']
+        fields = ["video"]
 
 
 class MeasurementFilter(FilterSet):
 
     resolution = ChoiceFilter(
-        label='resolution',
-        choices=(('hour', 'hour'), ('day', 'day')),
-        method='noop'
+        label="resolution", choices=(("hour", "hour"), ("day", "day")), method="noop"
     )
 
     class Meta:
         model = Measurement
-        fields = ('location', 'hog', 'measurement_type',
-                  'observed_at', 'resolution')
+        fields = ("location", "hog", "measurement_type", "observed_at", "resolution")
 
     def noop(self, queryset, name, value):
         return queryset
@@ -111,21 +115,20 @@ class MeasurementFilter(FilterSet):
 class MeasurementViewSet(viewsets.ModelViewSet):
     queryset = Measurement.objects.all()
     serializer_class = MeasurementSerializer
-    ordering_fields = ['observed_at', 'measurement_type']
+    ordering_fields = ["observed_at", "measurement_type"]
     filterset_class = MeasurementFilter
-    page_size_query_param = 'page_size'
+    page_size_query_param = "page_size"
     max_page_size = 10000
 
     @action(
         detail=True,
-        methods=['PUT'],
+        methods=["PUT"],
         serializer_class=MeasurementVideoSerializer,
         parser_classes=[MultiPartParser],
     )
     def video(self, request, pk):
         obj = self.get_object()
-        serializer = self.serializer_class(obj, data=request.data,
-                                           partial=True)
+        serializer = self.serializer_class(obj, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -137,26 +140,26 @@ class MeasurementViewSet(viewsets.ModelViewSet):
 
         """
         queryset = self.filter_queryset(self.get_queryset())
-        resolution = request.query_params.get('resolution', None)
-        measurement_type = request.query_params.get('measurement_type', None)
+        resolution = request.query_params.get("resolution", None)
+        measurement_type = request.query_params.get("measurement_type", None)
         if resolution:
-            sql = open(os.path.join(
-                settings.BASE_DIR,
-                'api/sql/measurement_by_day.sql'), 'r').read()
-            conditions = ['1 = 1']
+            sql = open(
+                os.path.join(settings.BASE_DIR, "api/sql/measurement_by_day.sql"), "r"
+            ).read()
+            conditions = ["1 = 1"]
             params = []
-            location = request.query_params.get('location', None)
+            location = request.query_params.get("location", None)
             if location:
                 conditions.append("location_id = %s")
                 params.append(location)
-            hog = request.query_params.get('hog', None)
+            hog = request.query_params.get("hog", None)
             if hog:
                 conditions.append("hog_id = %s")
                 params.append(hog)
             if measurement_type:
                 conditions.append("measurement_type = %s")
                 params.append(measurement_type)
-            observed_at = request.query_params.get('observed_at', None)
+            observed_at = request.query_params.get("observed_at", None)
             if observed_at:
                 if resolution:
                     conditions.append("date_trunc(%s, observed_at) = %s")
@@ -166,17 +169,16 @@ class MeasurementViewSet(viewsets.ModelViewSet):
                 params.append(observed_at)
             conditions = " AND ".join(conditions)
 
-            if resolution == 'day':
-                date_type = 'date'
+            if resolution == "day":
+                date_type = "date"
             else:
-                date_type = 'timestamp'
+                date_type = "timestamp"
             sql = sql.format(conditions=conditions, date_type=date_type)
-            params = [resolution] + params + ['1 ' + resolution]
+            params = [resolution] + params + ["1 " + resolution]
             params.append(hog)
             params.append(location)
             params.append(measurement_type)
-            queryset = queryset.raw(
-                sql, params)
+            queryset = queryset.raw(sql, params)
         # page = self.paginate_queryset(queryset)
         # if page is not None:
         #    serializer = self.get_serializer(page, many=True)
@@ -187,18 +189,18 @@ class MeasurementViewSet(viewsets.ModelViewSet):
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register('hogs', HogViewSet)
-router.register('locations', LocationViewSet)
-router.register('measurements', MeasurementViewSet)
+router.register("hogs", HogViewSet)
+router.register("locations", LocationViewSet)
+router.register("measurements", MeasurementViewSet)
 
 
 urlpatterns = [
-    path('', index, name='index'),
-    path('locations/', locations, name='locations'),
-    path('hogs/', hogs, name='hogs'),
-    path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    path('location/<slug:code>', location, name='location'),
-    path('hog/<slug:code>', hog, name='hog'),
-    path(r'docs/', get_swagger_view(title='Hog API')),
+    path("", index, name="index"),
+    path("locations/", locations, name="locations"),
+    path("hogs/", hogs, name="hogs"),
+    path("admin/", admin.site.urls),
+    path("api/", include(router.urls)),
+    path("location/<slug:code>", location, name="location"),
+    path("hog/<slug:code>", hog, name="hog"),
+    path(r"docs/", get_swagger_view(title="Hog API")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

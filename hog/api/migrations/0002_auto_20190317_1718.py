@@ -6,46 +6,68 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0001_initial'),
-    ]
+    dependencies = [("api", "0001_initial")]
 
     operations = [
         migrations.CreateModel(
-            name='Location',
+            name="Location",
             fields=[
-                ('code', models.CharField(max_length=80, primary_key=True, serialize=False)),
-                ('name', models.CharField(blank=True, max_length=200, null=True)),
-                ('location_type', models.CharField(choices=[('box', 'box'), ('tunnel', 'tunnel')], db_index=True, max_length=10)),
-                ('software_version', models.CharField(blank=True, max_length=5, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "code",
+                    models.CharField(max_length=80, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(blank=True, max_length=200, null=True)),
+                (
+                    "location_type",
+                    models.CharField(
+                        choices=[("box", "box"), ("tunnel", "tunnel")],
+                        db_index=True,
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "software_version",
+                    models.CharField(blank=True, max_length=5, null=True),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.AlterModelOptions(
-            name='measurement',
-            options={'ordering': ['observed_at']},
+            name="measurement", options={"ordering": ["observed_at"]}
         ),
-        migrations.RemoveField(
-            model_name='measurement',
-            name='box',
+        migrations.RemoveField(model_name="measurement", name="box"),
+        migrations.AlterField(
+            model_name="measurement",
+            name="hog",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="api.Hog",
+            ),
         ),
         migrations.AlterField(
-            model_name='measurement',
-            name='hog',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='api.Hog'),
+            model_name="measurement",
+            name="measurement_type",
+            field=models.CharField(
+                choices=[
+                    ("weight", "weight"),
+                    ("in_temp", "in_temp"),
+                    ("out_temp", "out_temp"),
+                ],
+                db_index=True,
+                max_length=10,
+            ),
         ),
-        migrations.AlterField(
-            model_name='measurement',
-            name='measurement_type',
-            field=models.CharField(choices=[('weight', 'weight'), ('in_temp', 'in_temp'), ('out_temp', 'out_temp')], db_index=True, max_length=10),
-        ),
-        migrations.DeleteModel(
-            name='Box',
-        ),
+        migrations.DeleteModel(name="Box"),
         migrations.AddField(
-            model_name='measurement',
-            name='location',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.PROTECT, to='api.Location'),
+            model_name="measurement",
+            name="location",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="api.Location",
+            ),
             preserve_default=False,
         ),
     ]
