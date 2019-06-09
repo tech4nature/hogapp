@@ -7,5 +7,35 @@
 
 <p>Intro stuff goes here</p>
 
+<h3>Our boxes</h3>
+
+<div class="row">
+<div class="col">
+  <div id="map"></div>
+</div>
+</div>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYmFjb24iLCJhIjoiY2ltdGYwZGJkMDA2a3Z3bTFucjgyZnlvdCJ9.hplRw1YZqso0DZNteF9S-g';
+var bounds = [[-2.21541, 51.74051], [-2.20105, 51.74452]];
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v9',
+  bounds: bounds,
+  fitBoundsOptions: { padding: 50 },
+  minZoom: 11
+});
+map.addControl(new mapboxgl.NavigationControl());
+$.getJSON("/api/locations/?format=json", function(data) {
+  data.results.forEach(function(box) {
+    var coords = box.coords.coordinates;
+    new mapboxgl.Marker()
+      .setLngLat([coords[0], coords[1]])
+      .setPopup(new mapboxgl.Popup({ offset: 25 })
+      .setHTML("<strong><a href='/location/" + box.code + "'>"  + box.name + "</a></strong>"))
+      .addTo(map);
+  });
+});
+</script>
 
 {% endblock %}

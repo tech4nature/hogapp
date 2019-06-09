@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_swagger",
+    "rest_framework_gis",
     "django_filters",
     "api",
     "frontend",
