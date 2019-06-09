@@ -96,7 +96,7 @@ WSGI_APPLICATION = "hog.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "hog",
         "USER": os.environ["DB_USER"],
         "PASSWORD": os.environ["DB_PASS"],

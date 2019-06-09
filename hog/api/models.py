@@ -1,4 +1,4 @@
-from django.db import models
+from django.contrib.gis.db import models
 from faker import Faker
 
 
@@ -21,6 +21,7 @@ class Location(models.Model):
         max_length=10, choices=LOCATION_TYPE_CHOICES, db_index=True
     )
     software_version = models.CharField(max_length=5, blank=True, null=True)
+    coords = models.PointField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

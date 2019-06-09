@@ -20,10 +20,11 @@ Now edit `.env`, and continue
 ## Set up postgres and database
 
 ```sh
-apt-get install postgresql-10
+apt-get install postgresql-10 postgis postgresql-10-postgis-2.4
 sudo su - postgres
 createuser <DB_USER from .dev> -W
 createdb hog -O <DB_USER from .dev>
+psql hog -c "CREATE EXTENSION postgis"
 ```
 
 ### Set up a python3 virtualenv
@@ -34,7 +35,6 @@ mkvirtualenv -p /usr/bin/python3 hogapp
 pip install pip-tools
 pip-sync
 ```
-
 
 ## Set up admin user
 
