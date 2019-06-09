@@ -12,18 +12,18 @@ Clone the repo
 ```sh
 git clone git@github.com:tech4nature/hogapp.git
 cd hogapp/hog/
-cp environment-sample .env
+cp environment-example .env
 ```
 
-Now edit `.env`, and continue
+Now edit `.env` with a database username and password: you'll actually create this user in the next step.
 
 ## Set up postgres and database
 
 ```sh
 apt-get install postgresql-10
 sudo su - postgres
-createuser <DB_USER from .dev> -W
-createdb hog -O <DB_USER from .dev>
+createuser <DB_USER from .env> -W
+createdb hog -O <DB_USER from .env>
 ```
 
 ### Set up a python3 virtualenv
@@ -35,6 +35,11 @@ pip install pip-tools
 pip-sync
 ```
 
+## Set up the database
+
+```
+./manage.py migrate
+```
 
 ## Set up admin user
 
