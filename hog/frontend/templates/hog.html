@@ -1,51 +1,50 @@
 {% extends "_base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 
-<div class="row">
-  <div class="col">
-    <h2>Locations {{ hog.name }} has visited</h2>
-    <ul>
-      {% for location in hog.locations %}
-      <li><a href="{% url 'location' location.code %}">{{ location }}</a></li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col">
-    <h2>Weights</h2>
-    <p>Chart of weights to go here</p>
-  </div>
-</div>
-
-
-<div class="row">
-  <div class="col">
-    <h2>Videos</h2>
-  </div>
-</div>
-
-{% for video_measurement in video_measurements %}
-<div class="row pt-1">
-  <div class="col">
-    {{ video_measurement.observed_at }}
-  </div>
-  <div class="col">
-    <div class="video-container">
-    <video id="my-video" class="video-js vjs-fill" controls preload="auto" width="640" height="264"
-           poster="" data-setup="{}">
-      <source src="{{ video_measurement.video.url }}" type="video/mp4">
-        <p class="vjs-no-js">
-          To view this video please enable JavaScript, and consider upgrading to a web browser that
-          <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-        </p>
-    </video>
+<h2>{{ hog }}'s recent activity</h2>
+{% for group in grouped_measurements %}
+   <div class="card">
+    <div class="card-header">
+      <img src="//placehold.it/50x50" class="img-circle float-left">
+      <div style="height: 50px">
+      <h5 class="card-title">{{ group.header.hog }} visited {{ group.header.location }}</h5>
+      <p class="card-text"><small class="text-muted">{{ group.header.observed_at|naturaltime }}</small></p>
+      </div>
     </div>
-  </div>
-</div>
+    <div class="card-body">
+      {% if group.in_temp or group.out_temp %}
+        Temperature in box:
+        {% if group.in_temp  %}
+          {{ group.in_temp.measurement }}&deg;C (inside)
+        {% endif %}
+        {% if group.in_temp %}
+          {{ group.in_temp.measurement }}&deg;C (outside)
+        {% endif %}
+        (<a href="">chart</a>)
+      {% endif %}
+
+      {% if group.weight %}
+        Weight: {{ group.weight.measurement }}g (<a href="">chart</a>)
+
+      {% endif %}
+    </div>
+
+    {% if group.video %}
+    <div class="video-container card-img-bottom">
+      <video id="my-video" class="video-js vjs-fill" controls preload="auto" width="640" height="264"
+             poster="" data-setup="{}">
+        <source src="{{ group.video.video.url }}" type="video/mp4">
+          <p class="vjs-no-js">
+            To view this video please enable JavaScript, and consider upgrading to a web browser that
+            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+          </p>
+      </video>
+    </div>
+    {% endif %}
+   </div>
 {% endfor %}
 
 {% endblock %}

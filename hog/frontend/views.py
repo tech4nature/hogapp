@@ -53,10 +53,41 @@ def location(request, code):
     return render(request, "location.html", context=context)
 
 
+def grouped_measurements(hog=None, group_duration=600):
+    """Return an array of groups of measurements that happened within a
+    `group_duration` seconds of each other
+
+    """
+    measurements = (
+        Measurement.objects.filter(hog=hog)
+        .exclude(video="", measurement_type="video")
+        .reverse()
+    )
+    groups = []
+
+    current_group = {}
+
+    current_group_start = None
+
+    for measurement in measurements:
+        if current_group_start is None:
+            current_group_start = measurement.observed_at
+            current_group["header"] = measurement
+        if (current_group_start - measurement.observed_at).seconds < group_duration:
+            current_group[measurement.measurement_type] = measurement
+        else:
+            groups.append(current_group)
+            current_group = {}
+            current_group["header"] = measurement
+            current_group[measurement.measurement_type] = measurement
+            current_group_start = measurement.observed_at
+    if current_group:
+        groups.append(current_group)
+    return groups
+
+
 def hog(request, code):
     hog = Hog.objects.get(code=code)
-    videos = Measurement.objects.filter(measurement_type="video", hog=hog).exclude(
-        video=""
-    )
-    context = {"hog": hog, "video_measurements": videos}
+    measurements = grouped_measurements(hog)
+    context = {"hog": hog, "grouped_measurements": measurements}
     return render(request, "hog.html", context=context)
