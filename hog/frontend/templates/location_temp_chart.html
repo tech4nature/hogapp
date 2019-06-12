@@ -1,0 +1,31 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block content %}
+<script>
+  var location_code = '{{ location.code }}';
+  var min_date = {{ min_date }};
+  var max_date = {{ max_date }};
+  var initial_resolution = '{{ initial_resolution }}';
+</script>
+
+<script src="{% static 'main.js' %}"></script>
+
+
+  <div class="row">
+    <div class="col">
+      <h1>Temperatures recorded at {{ location.name }}</h1>
+    </div>
+  </div>
+  {% if num_measurements %}
+  <div class="row">
+    <div class="col">
+      <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
+    </div>
+  </div>
+  <hr>
+  {% else %}
+    No measurements yet!
+  {% endif %}
+
+{% endblock %}
