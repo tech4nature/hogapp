@@ -50,11 +50,13 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.gis",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_swagger",
+    "rest_framework_gis",
     "django_filters",
     "api",
     "frontend",
@@ -96,7 +98,7 @@ WSGI_APPLICATION = "hog.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "hog",
         "USER": os.environ["DB_USER"],
         "PASSWORD": os.environ["DB_PASS"],
