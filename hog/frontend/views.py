@@ -45,12 +45,14 @@ def location(request, code):
             min_date = midpoint - min_range / 2
             max_date = midpoint + min_range / 2
             initial_resolution = "hour"
+    measurements = grouped_measurements(location=location)
     context = {
         "location": location,
         "min_date": min_date,
         "max_date": max_date,
         "num_measurements": num_measurements,
         "initial_resolution": initial_resolution,
+        "grouped_measurements": measurements,
     }
     return render(request, "location.html", context=context)
 
@@ -134,13 +136,20 @@ def _add_location_measurement_to_group(group, group_duration):
     return group
 
 
-def grouped_measurements(hog=None, group_duration=600):
+def grouped_measurements(hog=None, location=None, group_duration=3600):
     """Return an array of groups of measurements that happened within a
-    `group_duration` seconds of each other
+    `group_duration` seconds of each other; split measurements of
+    different hogs into different groups.
 
     """
+    kwargs = {}
+    if hog:
+        kwargs["hog"] = hog
+    if location:
+        kwargs["location"] = location
+        # kwargs["hog__isnull"] = False
     measurements = (
-        Measurement.objects.filter(hog=hog)
+        Measurement.objects.filter(**kwargs)
         .exclude(video="", measurement_type="video")
         .reverse()
     )
@@ -149,32 +158,48 @@ def grouped_measurements(hog=None, group_duration=600):
     current_group = {}
 
     current_group_start = None
+    last_measurement = None
     # XXX we should average measurements within group
     for measurement in measurements:
         if current_group_start is None:
             current_group_start = measurement.observed_at
             current_group["header"] = measurement
-        if (current_group_start - measurement.observed_at).seconds < group_duration:
+            last_measurement = measurement
+        if (
+            (
+                measurement.measurement_type.endswith("temp")
+                and last_measurement.measurement_type.endswith("temp")
+            )
+            or measurement.hog == last_measurement.hog
+            and (
+                (current_group_start - measurement.observed_at).seconds < group_duration
+            )
+        ):
+            # It's still the same hog and we're within the same time
+            # window; or it's a string of temperatures
             current_group[measurement.measurement_type] = measurement
         else:
-            current_group = _add_location_measurement_to_group(
-                current_group, group_duration
-            )
+            if True or not location:
+                current_group = _add_location_measurement_to_group(
+                    current_group, group_duration
+                )
             groups.append(current_group)
             current_group = {}
             current_group["header"] = measurement
             current_group[measurement.measurement_type] = measurement
             current_group_start = measurement.observed_at
+        last_measurement = measurement
     if current_group:
-        current_group = _add_location_measurement_to_group(
-            current_group, group_duration
-        )
+        if True or not location:
+            current_group = _add_location_measurement_to_group(
+                current_group, group_duration
+            )
         groups.append(current_group)
     return groups
 
 
 def hog(request, code):
     hog = Hog.objects.get(code=code)
-    measurements = grouped_measurements(hog)
+    measurements = grouped_measurements(hog=hog)
     context = {"hog": hog, "grouped_measurements": measurements}
     return render(request, "hog.html", context=context)

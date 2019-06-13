@@ -1,5 +1,6 @@
 {% extends "_base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 <script>
@@ -13,29 +14,21 @@
 <script src="{% static 'main.js' %}"></script>
 
 
-  <div class="row">
-    <div class="col">
-      <h1>Location: {{ location.name }}</h1>
-    </div>
-  </div>
-  {% if num_measurements %}
-  <div class="row">
-    <div class="col">
-      <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
-    </div>
-  </div>
-  <hr>
-  <div class="row">
-    <div class="col">
-      <h2>Hogs that have visited this location</h2>
-        {% for hog in location.hogs %}
-          <h3><a class="btn btn-secondary" href="{% url 'hog' hog.code %}">{{ hog }}</a></h3>
-          <div class="measurement-chart" id="weight-container-{{ hog.code }}" style="width:100%; height:400px;">Loading...</div>
-        {% endfor %}
-    </div>
-  </div>
-  {% else %}
-  No measurements yet!
-  {% endif %}
+<h1>Location: {{ location.name }}</h1>
+{% if num_measurements %}
+ <div class="row">
+   <div class="col">
+     <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
+   </div>
+ </div>
+ <div class="row">
+   <div class="col">
+     {% include '_card_wall.html' %}
+   </div>
+ </div>
+
+ {% else %}
+ No measurements yet!
+ {% endif %}
 
 {% endblock %}
