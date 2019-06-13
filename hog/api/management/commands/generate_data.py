@@ -11,6 +11,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.core.files import File
 from django.conf import settings
+from django.contrib.gis.geos import Point
 
 from api.models import Location
 from api.models import Hog
@@ -83,6 +84,10 @@ class Command(BaseCommand):
                     location_type="box",
                     name=fake.company() + " Box",
                     software_version="0.6",
+                    coords=Point(
+                        float(fake.coordinate(center=-2.207, radius=0.008)),
+                        float(fake.coordinate(center=51.74220, radius=0.002))
+                    )
                 )
                 for _ in range(0, 1800):
                     observed_at = start_date + timedelta(seconds=random.choice(seconds))

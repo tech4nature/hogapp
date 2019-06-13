@@ -13,6 +13,7 @@ django-filter==2.1.0
 django-rest-swagger==2.2.0
 django==2.1.7
 djangorestframework==3.9.2
+djangorestframework-gis==0.14
 faker==1.0.4
 idna==2.8                 # via requests
 itypes==1.1.0             # via coreapi

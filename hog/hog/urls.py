@@ -59,7 +59,7 @@ class HogViewSet(viewsets.ModelViewSet):
 class LocationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Location
-        fields = ("code", "name", "created_at", "software_version")
+        fields = ("code", "name", "created_at", "software_version", "coords")
 
 
 class LocationViewSet(viewsets.ModelViewSet):
