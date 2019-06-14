@@ -34,4 +34,7 @@ class HogViewTests(TestCase):
             video=SimpleUploadedFile("hog.mp4", b"these are the file contents!"),
         )
         response = self.client.get(reverse("hog", kwargs={"code": hog.code}))
-        self.assertEqual(list(response.context["video_measurements"]), [uploaded_video])
+        self.assertEqual(
+            list(response.context["grouped_measurements"]),
+            [{"header": uploaded_video, "video": uploaded_video}],
+        )
