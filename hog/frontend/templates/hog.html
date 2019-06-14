@@ -4,7 +4,13 @@
 
 {% block content %}
 
-<h2>{{ hog }}'s recent activity</h2>
 
-{% include '_card_wall.html' %}
+<div class="row">
+  <h2>{{ hog }}'s recent activity</h2>
+</div>
+ <div class="row">
+   <div class="col-lg-6">
+     {% include '_card_wall.html' %}
+   </div>
+</dov>
 {% endblock %}

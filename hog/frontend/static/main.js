@@ -122,7 +122,7 @@ $(document).ready(function() {
           selected: 1
         },
         navigator: {
-          enabled: false
+          enabled: true
         },
         plotOptions: {
           series: {

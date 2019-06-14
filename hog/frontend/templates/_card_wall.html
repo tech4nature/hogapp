@@ -1,4 +1,5 @@
 {% load humanize %}
+{% load static %}
 
 <div class="card-wall">
 {% for group in grouped_measurements %}
@@ -33,8 +34,8 @@
 
     {% if group.video %}
     <div class="video-container card-img-bottom">
-      <video id="my-video" class="video-js vjs-fill" controls preload="auto" width="640" height="264"
-             poster="" data-setup="{}">
+      <video id="my-video" class="video-js vjs-fill" controls poster="{% static 'vid.jpg' %}" preload="none" width="100%" height="100%"
+             poster="" data-setup='{"aspectRatio":"16:9", "fluid": true}'>
         <source src="{{ group.video.video.url }}" type="video/mp4">
           <p class="vjs-no-js">
             To view this video please enable JavaScript, and consider upgrading to a web browser that

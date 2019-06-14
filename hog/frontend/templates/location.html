@@ -14,16 +14,17 @@
 <script src="{% static 'main.js' %}"></script>
 
 
-<h1>Location: {{ location.name }}</h1>
+<div class="row">
+  <h2>Location: {{ location.name }}</h2>
+</div>
+
 {% if num_measurements %}
  <div class="row">
-   <div class="col">
-     <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
-   </div>
- </div>
- <div class="row">
-   <div class="col">
+   <div class="col-lg-6">
      {% include '_card_wall.html' %}
+   </div>
+   <div class="col-lg-6">
+     <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
    </div>
  </div>
 
