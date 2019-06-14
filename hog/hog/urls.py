@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 
 from django_filters import FilterSet
 from django_filters import ChoiceFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 from api.models import Location
 from api.models import Hog
@@ -65,6 +66,8 @@ class LocationSerializer(serializers.HyperlinkedModelSerializer):
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("code",)
 
 
 class MeasurementSerializer(serializers.ModelSerializer):
