@@ -1,9 +1,10 @@
 from django.contrib.gis.db import models
+from django.core.validators import validate_slug
 from faker import Faker
 
 
 class Hog(models.Model):
-    code = models.CharField(max_length=80, primary_key=True)
+    code = models.CharField(max_length=80, primary_key=True, validators=[validate_slug])
     name = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
@@ -15,7 +16,7 @@ class Hog(models.Model):
 
 class Location(models.Model):
     LOCATION_TYPE_CHOICES = [("box", "box"), ("tunnel", "tunnel")]
-    code = models.CharField(max_length=80, primary_key=True)
+    code = models.CharField(max_length=80, primary_key=True, validators=[validate_slug])
     name = models.CharField(max_length=200, blank=True, null=True)
     location_type = models.CharField(
         max_length=10, choices=LOCATION_TYPE_CHOICES, db_index=True
