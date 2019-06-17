@@ -1,7 +1,7 @@
 Django app for exploring data gathered about hedgehogs
 
 
-# Installation
+# Local Installation
 
 Requires python3, and a postgres server
 
@@ -56,7 +56,14 @@ cd hog
 
     ./manage.py runserver
 
-## View api
+# Deployment to Google Cloud Services
+
+* Set up a new project
+* Create a Google App Engine instance
+* Create a postgres Cloud SQL database (to match the name in `settings.py`)
+*
+
+# API
 
 Visit http://localhost:8000/api/
 

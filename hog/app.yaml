@@ -19,4 +19,5 @@ readiness_check:
   app_start_timeout_sec: 300  # For new deployments, failures here will result in a roll back
 
 includes:
+  # Create this file with `gcloud kms decrypt --location global --keyring tech4nature --key hogapp --ciphertext-file env_variables.yaml.encrypted --plaintext-file env_variables.yaml
   - env_variables.yaml
