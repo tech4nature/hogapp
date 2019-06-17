@@ -66,7 +66,7 @@ if __name__ == "__main__":
     print(create_outside_temp("myplace", 18.4))
     print()
     print("Adding a video:")
-    print(upload_video("myplace", "hog-23", "hog/media/sample_file.mp4"))
+    print(upload_video("myplace", "hog-23", "../hog/media/videos/sample_video.mp4"))
     print()
     print("All data for My Place")
     print(
@@ -75,3 +75,4 @@ if __name__ == "__main__":
             indent=2,
         )
     )
+# password A9btCnqrvv9lBzL7
