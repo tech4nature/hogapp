@@ -7,7 +7,7 @@ django-filter  # Filtering support for djangorestframework
 faker
 psycopg2-binary
 django-rest-swagger
-django-storages[s3]
+django-storages
 numpy
 boto3
 gunicorn
