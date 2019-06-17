@@ -11,3 +11,4 @@ django-storages[s3]
 numpy
 boto3
 gunicorn
+whitenoise

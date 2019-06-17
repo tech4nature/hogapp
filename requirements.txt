@@ -40,4 +40,4 @@ six==1.12.0               # via faker, python-dateutil
 text-unidecode==1.2       # via faker
 uritemplate==3.0.0        # via coreapi
 urllib3==1.24.1           # via botocore, requests
-whitenoise==4.1.2         # via django-heroku
+whitenoise==4.1.2
