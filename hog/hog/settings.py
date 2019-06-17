@@ -41,7 +41,7 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["hogapp", "localhost", "connectionengine.co.uk"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -97,17 +97,8 @@ WSGI_APPLICATION = "hog.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "hog",
-        "USER": os.environ["DB_USER"],
-        "PASSWORD": os.environ["DB_PASS"],
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
-    }
-}
-
+# Note that this (and logging settings) are mutated by the django-heroku app
+DATABASES = {"default": {"ENGINE": "django.contrib.gis.db.backends.postgis"}}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -157,3 +148,17 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 10000,
 }
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+AWS_ACCESS_KEY_ID = "AKIAT3MZL6C4HJXYUFJC"
+AWS_SECRET_ACCESS_KEY = "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"
+AWS_STORAGE_BUCKET_NAME = "hogapp"
+AWS_AUTO_CREATE_BUCKET = True
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "public,max-age=86400"}
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+# Configure Django App for Heroku.
+import django_heroku
+
+django_heroku.settings(locals())

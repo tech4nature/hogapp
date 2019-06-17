@@ -1,9 +1,13 @@
 Django
 djangorestframework
+djangorestframework-gis
+django-heroku
 markdown       # Markdown support for the browsable API.
 django-filter  # Filtering support for djangorestframework
 faker
-psycopg2
+psycopg2-binary
 django-rest-swagger
-django-dotenv
+django-storages[s3]
 numpy
+boto3
+gunicorn
