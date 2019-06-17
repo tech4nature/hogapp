@@ -1,2 +1,2 @@
-release: cd hogapp && python manage.py migrate
-web: cd hogapp && gunicorn hog.wsgi
+release: cd hog && python manage.py migrate
+web: cd hog && gunicorn hog.wsgi
