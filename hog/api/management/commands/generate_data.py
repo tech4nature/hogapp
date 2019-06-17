@@ -72,8 +72,6 @@ class Command(BaseCommand):
         start_date = datetime(2018, 10, 1, 1, tzinfo=pytz.utc)
         end_date = datetime(2019, 4, 1, 1, tzinfo=pytz.utc)
         seconds = list(range(0, int((end_date - start_date).total_seconds())))
-        f = open(os.path.join(settings.MEDIA_ROOT, "sample_file.mp4"), "rb")
-        fake_video = File(f)
         with transaction.atomic():
             Measurement.objects.all().delete()
             Location.objects.all().delete()
@@ -86,8 +84,8 @@ class Command(BaseCommand):
                     software_version="0.6",
                     coords=Point(
                         float(fake.coordinate(center=-2.207, radius=0.008)),
-                        float(fake.coordinate(center=51.74220, radius=0.002))
-                    )
+                        float(fake.coordinate(center=51.74220, radius=0.002)),
+                    ),
                 )
                 for _ in range(0, 1800):
                     observed_at = start_date + timedelta(seconds=random.choice(seconds))
@@ -110,22 +108,26 @@ class Command(BaseCommand):
                         code="hog-" + fake.ean13(), name=fake.name()
                     )
                     for _ in range(0, random.choice(range(5, 100))):
-                        # A random number of visits where each hog gets weighed
-                        observed_at = start_date + timedelta(
-                            seconds=random.choice(seconds)
-                        )
-                        weight = fake.weight(observed_at)
-                        Measurement.objects.create(
-                            hog=hog1,
-                            location=box1,
-                            measurement_type="weight",
-                            measurement=weight,
-                            observed_at=observed_at,
-                        )
-                        m = Measurement.objects.create(
-                            hog=hog1,
-                            location=box1,
-                            measurement_type="video",
-                            observed_at=observed_at,
-                        )
-                        m.video.save("sample_video.mp4", fake_video)
+                        with open(
+                            os.path.join(settings.MEDIA_ROOT, "sample_file.mp4"), "rb"
+                        ) as f:
+                            fake_video = File(f)
+                            # A random number of visits where each hog gets weighed
+                            observed_at = start_date + timedelta(
+                                seconds=random.choice(seconds)
+                            )
+                            weight = fake.weight(observed_at)
+                            Measurement.objects.create(
+                                hog=hog1,
+                                location=box1,
+                                measurement_type="weight",
+                                measurement=weight,
+                                observed_at=observed_at,
+                            )
+                            m = Measurement.objects.create(
+                                hog=hog1,
+                                location=box1,
+                                measurement_type="video",
+                                observed_at=observed_at,
+                            )
+                            m.video.save("sample_video.mp4", fake_video)
