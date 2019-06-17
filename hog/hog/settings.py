@@ -157,3 +157,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 10000,
 }
+
+DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+GS_BUCKET_NAME = "hogapp"
+GS_PROJECT_ID = "hedgehogrepublic"
+GS_CACHE_CONTROL = "public, max-age=86400"  # 1 day
