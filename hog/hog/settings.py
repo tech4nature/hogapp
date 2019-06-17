@@ -41,7 +41,7 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["hogapp", "localhost", "connectionengine.co.uk"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -100,13 +100,24 @@ WSGI_APPLICATION = "hog.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "hog",
+        "NAME": "hogapp",
         "USER": os.environ["DB_USER"],
         "PASSWORD": os.environ["DB_PASS"],
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
     }
 }
+if "GAE_SERVICE" in os.environ:
+    DATABASES["default"][
+        "HOST"
+    ] = "/cloudsql/hedgehogrepublic:europe-west2:hedgehogrepublic"
+    DATABASES["default"]["PORT"] = "3306"
+elif "USE_GAE_PROXY" in os.environ:
+    # For running commands like `manage.py migrate` against GCS database
+    DATABASES["default"]["HOST"] = "127.0.0.1"
+    DATABASES["default"]["PORT"] = "3306"
+else:
+    # For testing, local dev work, etc
+    DATABASES["default"]["HOST"] = "127.0.0.1"
+    DATABASES["default"]["PORT"] = "5432"
 
 
 # Password validation
@@ -158,6 +169,44 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 10000,
 }
 
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "detailed": {
+            "format": (
+                "%(asctime)s [%(process)d] [%(levelname)s] "
+                + "pathname=%(pathname)s lineno=%(lineno)s "
+                + "funcname=%(funcName)s %(message)s"
+            ),
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        }
+    },
+    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "detailed",
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["mail_admins", "console"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+        "hogapp": {"handlers": ["console"], "level": "INFO", "propagate": True},
+    },
+}
+
+# File storage
 DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 GS_BUCKET_NAME = "hogapp"
 GS_PROJECT_ID = "hedgehogrepublic"
