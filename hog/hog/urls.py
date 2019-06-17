@@ -23,12 +23,15 @@ from django.conf.urls.static import static
 
 from django_filters import FilterSet
 from django_filters import ChoiceFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 from api.models import Location
 from api.models import Hog
 from api.models import Measurement
 from frontend.views import index
 from frontend.views import location
+from frontend.views import location_temp_chart
+from frontend.views import hog_weight_chart
 from frontend.views import locations
 from frontend.views import hog
 from frontend.views import hogs
@@ -63,6 +66,8 @@ class LocationSerializer(serializers.HyperlinkedModelSerializer):
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("code",)
 
 
 class MeasurementSerializer(serializers.ModelSerializer):
@@ -201,6 +206,12 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("location/<slug:code>", location, name="location"),
+    path(
+        "location/<slug:code>/temp_chart",
+        location_temp_chart,
+        name="location_temp_chart",
+    ),
     path("hog/<slug:code>", hog, name="hog"),
+    path("hog/<slug:code>/weight_chart", hog_weight_chart, name="hog_weight_chart"),
     path(r"docs/", get_swagger_view(title="Hog API")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

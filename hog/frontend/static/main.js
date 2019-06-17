@@ -122,7 +122,7 @@ $(document).ready(function() {
           selected: 1
         },
         navigator: {
-          enabled: false
+          enabled: true
         },
         plotOptions: {
           series: {
@@ -180,9 +180,10 @@ $(document).ready(function() {
       $chart.data('hog_code', hog_code);
     });
   }
-
-  chart = tempChart();
-  updateChart('temp-container', initial_resolution, location_code);
+  if($('#temp-container').length > 0) {
+    chart = tempChart();
+    updateChart('temp-container', initial_resolution, location_code);
+  }
   $.each(hog_codes, function(i, hog_code) {
     chart = weightChart(hog_code);
     updateChart('weight-container-' + hog_code, initial_resolution, location_code, hog_code);

@@ -1,51 +1,16 @@
 {% extends "_base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 
-<div class="row">
-  <div class="col">
-    <h2>Locations {{ hog.name }} has visited</h2>
-    <ul>
-      {% for location in hog.locations %}
-      <li><a href="{% url 'location' location.code %}">{{ location }}</a></li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
 
 <div class="row">
-  <div class="col">
-    <h2>Weights</h2>
-    <p>Chart of weights to go here</p>
-  </div>
+  <h2>{{ hog }}'s recent activity</h2>
 </div>
-
-
-<div class="row">
-  <div class="col">
-    <h2>Videos</h2>
-  </div>
-</div>
-
-{% for video_measurement in video_measurements %}
-<div class="row pt-1">
-  <div class="col">
-    {{ video_measurement.observed_at }}
-  </div>
-  <div class="col">
-    <div class="video-container">
-    <video id="my-video" class="video-js vjs-fill" controls preload="auto" width="640" height="264"
-           poster="" data-setup="{}">
-      <source src="{{ video_measurement.video.url }}" type="video/mp4">
-        <p class="vjs-no-js">
-          To view this video please enable JavaScript, and consider upgrading to a web browser that
-          <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-        </p>
-    </video>
-    </div>
-  </div>
-</div>
-{% endfor %}
-
+ <div class="row">
+   <div class="col-lg-6">
+     {% include '_card_wall.html' %}
+   </div>
+</dov>
 {% endblock %}

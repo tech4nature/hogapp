@@ -1,5 +1,6 @@
 {% extends "_base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block content %}
 <script>
@@ -13,29 +14,46 @@
 <script src="{% static 'main.js' %}"></script>
 
 
-  <div class="row">
-    <div class="col">
-      <h1>Location: {{ location.name }}</h1>
-    </div>
-  </div>
-  {% if num_measurements %}
-  <div class="row">
-    <div class="col">
-      <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
-    </div>
-  </div>
-  <hr>
-  <div class="row">
-    <div class="col">
-      <h2>Hogs that have visited this location</h2>
-        {% for hog in location.hogs %}
-          <h3><a class="btn btn-secondary" href="{% url 'hog' hog.code %}">{{ hog }}</a></h3>
-          <div class="measurement-chart" id="weight-container-{{ hog.code }}" style="width:100%; height:400px;">Loading...</div>
-        {% endfor %}
-    </div>
-  </div>
-  {% else %}
-  No measurements yet!
-  {% endif %}
+<div class="row">
+  <h2>Location: {{ location.name }}</h2>
+</div>
+
+
+
+
+{% if num_measurements %}
+ <div class="row">
+   <div class="col-lg-6">
+     {% include '_card_wall.html' %}
+   </div>
+   <div class="col-lg-6">
+     <div class="card" id="map"></div>
+     <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
+   </div>
+ </div>
+
+ {% else %}
+ No measurements yet!
+ {% endif %}
+<script>
+mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYmFjb24iLCJhIjoiY2ltdGYwZGJkMDA2a3Z3bTFucjgyZnlvdCJ9.hplRw1YZqso0DZNteF9S-g';
+var bounds = [[-2.21541, 51.74051], [-2.20105, 51.74452]];
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v9',
+  bounds: bounds,
+  fitBoundsOptions: { padding: 50 },
+  minZoom: 11
+});
+map.addControl(new mapboxgl.NavigationControl());
+$.getJSON("/api/locations/?code={{ location.code }}&format=json", function(data) {
+  data.results.forEach(function(box) {
+    var coords = box.coords.coordinates;
+    new mapboxgl.Marker()
+      .setLngLat([coords[0], coords[1]])
+      .addTo(map);
+  });
+});
+</script>
 
 {% endblock %}
