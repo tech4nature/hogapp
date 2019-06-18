@@ -46,14 +46,12 @@ def location(request, code):
             min_date = midpoint - min_range / 2
             max_date = midpoint + min_range / 2
             initial_resolution = "hour"
-    measurements = grouped_measurements(location=location)
     context = {
         "location": location,
         "min_date": min_date,
         "max_date": max_date,
         "num_measurements": num_measurements,
         "initial_resolution": initial_resolution,
-        "grouped_measurements": measurements,
     }
     return render(request, "location.html", context=context)
 
@@ -233,6 +231,5 @@ def card_wall_fragment(request):
 
 def hog(request, code):
     hog = Hog.objects.get(code=code)
-    measurements = grouped_measurements(hog=hog, max_cards=10)
     context = {"hog": hog}
     return render(request, "hog.html", context=context)
