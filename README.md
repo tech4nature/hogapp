@@ -3,7 +3,7 @@ Django app for exploring data gathered about hedgehogs
 
 # Installation
 
-Requires python3, and a postgres server
+Requires python3, a postgres server, and a redis server
 
 ## Create environment
 
@@ -48,6 +48,13 @@ cd hog
 ./manage.py createsuperuser
 ```
 
+## Install other dependencies
+
+```
+apt-get install redis-server
+apt-get install ffmpeg
+```
+
 ## Generate sample data
 
     ./manage.py generate_data
@@ -55,6 +62,10 @@ cd hog
 ## Run server
 
     ./manage.py runserver
+
+## Run redis worker
+
+    ./manage.py worker
 
 ## View api
 

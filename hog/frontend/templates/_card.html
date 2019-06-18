@@ -32,7 +32,7 @@
 
     {% if group.video %}
     <div class="video-container card-img-bottom">
-      <video id="my-video" class="video-js vjs-fill" controls poster="{% static 'vid.jpg' %}" preload="none" width="100%" height="100%"
+      <video id="my-video" class="video-js vjs-fill" controls poster="{% if group.video.video_poster %}{{ group.video.video_poster.url }}{% else %}{% static 'vid.jpg' %}{% endif %}" preload="none" width="100%" height="100%"
              poster="" data-setup='{"aspectRatio":"16:9", "fluid": true}'>
         <source src="{{ group.video.video.url }}" type="video/mp4">
           <p class="vjs-no-js">

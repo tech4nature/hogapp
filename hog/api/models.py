@@ -47,6 +47,7 @@ class Measurement(models.Model):
     )
     measurement = models.FloatField(blank=True, null=True)
     video = models.FileField(blank=True, null=True, upload_to="videos")
+    video_poster = models.FileField(blank=True, null=True, upload_to="posters")
     observed_at = models.DateTimeField(db_index=True)
 
     def __str__(self):

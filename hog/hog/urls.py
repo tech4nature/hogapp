@@ -133,10 +133,15 @@ class MeasurementViewSet(viewsets.ModelViewSet):
         parser_classes=[MultiPartParser],
     )
     def video(self, request, pk):
+        from utils import delayed_make_poster
+
         obj = self.get_object()
         serializer = self.serializer_class(obj, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            if obj.measurement_type == "video":
+                delayed_make_poster(obj)
+
             return Response(serializer.data)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 

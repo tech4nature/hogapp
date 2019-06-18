@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -12,9 +14,12 @@ from api.models import Measurement
 from .factory import create_location
 from .factory import create_hog
 
+from frontend.views import grouped_measurements
+
 
 class HogViewTests(TestCase):
-    def test_incomplete_videos(self):
+    @patch("utils.delayed_make_poster")
+    def test_incomplete_videos(self, mock_delayed_make_poster):
         """Check we don't attempt to display videos that have not been uploaded
         """
         hog = create_hog()
@@ -33,8 +38,7 @@ class HogViewTests(TestCase):
             observed_at=observed_at,
             video=SimpleUploadedFile("hog.mp4", b"these are the file contents!"),
         )
-        response = self.client.get(reverse("hog", kwargs={"code": hog.code}))
+        measurements = grouped_measurements(hog=hog.code)
         self.assertEqual(
-            list(response.context["grouped_measurements"]),
-            [{"header": uploaded_video, "video": uploaded_video}],
+            measurements, [{"header": uploaded_video, "video": uploaded_video}]
         )
