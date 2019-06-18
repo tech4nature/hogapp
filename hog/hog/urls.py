@@ -35,6 +35,7 @@ from frontend.views import hog_weight_chart
 from frontend.views import locations
 from frontend.views import hog
 from frontend.views import hogs
+from frontend.views import card_wall_fragment
 
 from rest_framework import routers, serializers, viewsets, status
 from rest_framework.response import Response
@@ -212,6 +213,7 @@ urlpatterns = [
         name="location_temp_chart",
     ),
     path("hog/<slug:code>", hog, name="hog"),
+    path("card_wall_fragment", card_wall_fragment, name="card_wall_fragment"),
     path("hog/<slug:code>/weight_chart", hog_weight_chart, name="hog_weight_chart"),
     path(r"docs/", get_swagger_view(title="Hog API")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

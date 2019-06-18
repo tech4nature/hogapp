@@ -5,7 +5,7 @@
 {% block content %}
 <script>
   var location_code = '{{ location.code }}';
-  var hog_codes = [{% for hog in location.hogs %}'{{hog.code}}',{% endfor %}];
+  var hog_code = undefined;
   var min_date = {{ min_date }};
   var max_date = {{ max_date }};
   var initial_resolution = '{{ initial_resolution }}';
@@ -24,7 +24,9 @@
 {% if num_measurements %}
  <div class="row">
    <div class="col-lg-6">
-     {% include '_card_wall.html' %}
+     <div class="card-wall">
+       <div id="card-wall"><span id="loading">Loading...</span></div>
+     </div>
    </div>
    <div class="col-lg-6">
      <div class="card" id="map"></div>

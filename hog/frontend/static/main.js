@@ -39,11 +39,6 @@ $(document).ready(function() {
           endOnTick: false,
           min: min_date,
           max: max_date,
-          events: {
-            setExtremes: function (e) {
-              syncExtremes(e.min, e.max, 'temp-container');
-            }
-          }
         },
         yAxis: {
           opposite: false,
@@ -71,41 +66,6 @@ $(document).ready(function() {
           },
         ]
     });
-  }
-
-  function syncExtremes(min, max, source_chart_id) {
-    if (!window.adjusting && (max - min) > window.minRange) {
-      window.adjusting = true;
-      // adjust x-axis resolution we get from server based on zoom level
-      $.each($('.measurement-chart'), function(i, chart) {
-        $chart = $(chart);
-        hc_chart = $(chart).highcharts();
-        var update_data = false;
-        var hour = 60 * 60 * 1000;
-        var one_day = 24 * 60 * 60 * 1000;
-        if ($chart.data('resolution') == 'day' && (max - min) < 7 * one_day) {
-          $chart.data('resolution', 'hour');
-          update_data = true;
-        } else if ($chart.data('resolution') == 'hour' && (max - min) >= 7 * one_day) {
-          $chart.data('resolution', 'day');
-          update_data = true;
-        }
-        if (update_data) {
-          updateChart(
-            $chart.attr('id'),
-            $chart.data('resolution'),
-            $chart.data('location_code'),
-            $chart.data('hog_code'));
-        }
-        // make all other charts match the same zoom level
-        if (chart.id !== source_chart_id) {
-          var redraw = true;
-          var animation = false;
-          hc_chart.xAxis[0].setExtremes(min, max, redraw, animation);
-        }
-      });
-      window.adjusting = false;
-    }
   }
 
   function weightChart(hog_code) {
@@ -136,11 +96,6 @@ $(document).ready(function() {
           endOnTick: false,
           min: min_date,
           max: max_date,
-          events: {
-            setExtremes: function (e) {
-              syncExtremes(e.min, e.max, chart_id);
-            }
-          }
         },
         title: {
           text: 'Weight (g)'
@@ -180,12 +135,55 @@ $(document).ready(function() {
       $chart.data('hog_code', hog_code);
     });
   }
-  if($('#temp-container').length > 0) {
-    chart = tempChart();
-    updateChart('temp-container', initial_resolution, location_code);
+
+  function drawCharts() {
+    if (typeof max_date !== 'undefined' && typeof min_date !== 'undefined' && typeof initial_resolution !== 'undefined') {
+      if (typeof location_code !== 'undefined') {
+        if($('#temp-container').length > 0) {
+          chart = tempChart();
+          updateChart('temp-container', initial_resolution, location_code);
+        }
+      }
+      if (typeof hog_code !== 'undefined') {
+        chart = weightChart(hog_code);
+        updateChart('weight-container-' + hog_code, initial_resolution, location_code, hog_code);
+      }
+    }
   }
-  $.each(hog_codes, function(i, hog_code) {
-    chart = weightChart(hog_code);
-    updateChart('weight-container-' + hog_code, initial_resolution, location_code, hog_code);
-  });
+
+  function loadWall(hog_code, location_code, most_recent_id) {
+    var url = '/card_wall_fragment?';
+    if (typeof most_recent_id !== 'undefined') {
+      url += 'most_recent_id=' + most_recent_id + '&';
+    }
+    if (typeof hog_code !== 'undefined') {
+      url += 'hog=' + hog_code + '&';
+    }
+    if (typeof location_code !== 'undefined') {
+      url += 'location=' + location_code + '&';
+    }
+    $.ajax({
+      url: url
+    }).done(
+      function(data){
+        $('#loading').hide();
+        $('#card-wall').append(data);
+      }
+    );
+  }
+
+  drawCharts();
+  loadWall(hog_code, location_code);
+
+  $(window).scroll(function() {
+    if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
+      var loader = $('#load-more-cards');
+      var most_recent_id = loader.data('most-recent-id');
+      if (most_recent_id) {
+        loader.remove();
+        loadWall(hog_code, location_code, most_recent_id);
+      }
+   }
+});
+
 });;

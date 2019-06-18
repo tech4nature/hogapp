@@ -1,49 +1,5 @@
-{% load humanize %}
-{% load static %}
-
-<div class="card-wall">
 {% for group in grouped_measurements %}
-   <div class="card">
-    <div class="card-header">
-      <img src="//placehold.it/50x50" class="img-circle float-left">
-
-      <h5 class="card-title">{% if group.header.hog %}<a href="{% url 'hog' code=group.header.hog.code %}">{{ group.header.hog|default:"Somebody" }}</a> visited {% else %}Measurement at {% endif %}<a href="{% url 'location' code=group.header.location.code %}">{{ group.header.location }}</a></a></h5>
-      <p class="card-text"><small class="text-muted">{{ group.header.observed_at|naturaltime }}</small></p>
-    </div>
-    <div class="card-body">
-      {% if group.in_temp or group.out_temp %}
-      <p class="card-text">
-        <a href="{% url 'location_temp_chart' group.in_temp.location.code|default_if_none:group.out_temp.location.code %}">Hogbox temperature</a>:
-        {% if group.in_temp  %}
-          {{ group.in_temp.measurement|floatformat }}&deg;C inside{% if group.out_temp %}, {% endif %}
-
-        {% endif %}
-        {% if group.out_temp %}
-          {{ group.out_temp.measurement|floatformat }}&deg;C outside
-        {% endif %}
-
-       </p>
-      {% endif %}
-
-      {% if group.weight %}
-      <p class="card-text">
-        <a href="{% url 'hog_weight_chart' group.weight.hog.code %}">Weight</a>: {{ group.weight.measurement }}g
-      </p>
-      {% endif %}
-    </div>
-
-    {% if group.video %}
-    <div class="video-container card-img-bottom">
-      <video id="my-video" class="video-js vjs-fill" controls poster="{% static 'vid.jpg' %}" preload="none" width="100%" height="100%"
-             poster="" data-setup='{"aspectRatio":"16:9", "fluid": true}'>
-        <source src="{{ group.video.video.url }}" type="video/mp4">
-          <p class="vjs-no-js">
-            To view this video please enable JavaScript, and consider upgrading to a web browser that
-            <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-          </p>
-      </video>
-    </div>
-    {% endif %}
-   </div>
+  {% include '_card.html' %}
 {% endfor %}
-</div>
+
+<span id="load-more-cards" data-most-recent-id="{{ last_id }}"></span>

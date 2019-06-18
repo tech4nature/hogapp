@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.db.models import Max, Min
 from django.shortcuts import render
+from django.template.loader import render_to_string
 
 from api.models import Hog
 from api.models import Location
@@ -122,7 +123,11 @@ def hog_weight_chart(request, code):
 
 
 def _add_location_measurement_to_group(group, group_duration):
-    first_in_group = list(group.values())[0]
+    measurements = list(group.values())
+    first_in_group = measurements[0]
+    last_in_group = measurements[-1]
+    group["header"].last_id = last_in_group.id
+
     location = first_in_group.location
     location_measurements = location.measurement_set.filter(
         hog=None,
@@ -131,12 +136,13 @@ def _add_location_measurement_to_group(group, group_duration):
     )
     for measurement in location_measurements:
         if measurement.measurement_type not in group:
-            print(group)
             group[measurement.measurement_type] = measurement
     return group
 
 
-def grouped_measurements(hog=None, location=None, group_duration=3600):
+def grouped_measurements(
+    hog=None, location=None, group_duration=3600, max_cards=20, most_recent_id=None
+):
     """Return an array of groups of measurements that happened within a
     `group_duration` seconds of each other; split measurements of
     different hogs into different groups.
@@ -147,10 +153,12 @@ def grouped_measurements(hog=None, location=None, group_duration=3600):
         kwargs["hog"] = hog
     if location:
         kwargs["location"] = location
-        # kwargs["hog__isnull"] = False
+    if most_recent_id:
+        kwargs["id__lt"] = most_recent_id
     measurements = (
         Measurement.objects.filter(**kwargs)
         .exclude(video="", measurement_type="video")
+        .order_by("id")
         .reverse()
     )
     groups = []
@@ -159,6 +167,7 @@ def grouped_measurements(hog=None, location=None, group_duration=3600):
 
     current_group_start = None
     last_measurement = None
+    cards = 0
     # XXX we should average measurements within group
     for measurement in measurements:
         if current_group_start is None:
@@ -184,10 +193,13 @@ def grouped_measurements(hog=None, location=None, group_duration=3600):
                     current_group, group_duration
                 )
             groups.append(current_group)
+            cards += 1
             current_group = {}
             current_group["header"] = measurement
             current_group[measurement.measurement_type] = measurement
             current_group_start = measurement.observed_at
+            if cards == (max_cards - 1):
+                break
         last_measurement = measurement
     if current_group:
         if True or not location:
@@ -198,8 +210,29 @@ def grouped_measurements(hog=None, location=None, group_duration=3600):
     return groups
 
 
+def card_wall_fragment(request):
+    """Just the HTML for the wall, suitable for inclusion within a full HTML page
+    """
+    max_cards = int(request.GET.get("max_cards", 6))
+    most_recent_id = request.GET.get("most_recent_id")
+    location = request.GET.get("location")
+    hog = request.GET.get("hog")
+    measurements = grouped_measurements(
+        hog=hog, max_cards=max_cards, location=location, most_recent_id=most_recent_id
+    )
+    if measurements:
+        last_id = measurements[-1]["header"].last_id
+    else:
+        last_id = ""
+    return render(
+        request,
+        "_card_wall.html",
+        context={"grouped_measurements": measurements, "last_id": last_id},
+    )
+
+
 def hog(request, code):
     hog = Hog.objects.get(code=code)
-    measurements = grouped_measurements(hog=hog)
-    context = {"hog": hog, "grouped_measurements": measurements}
+    measurements = grouped_measurements(hog=hog, max_cards=10)
+    context = {"hog": hog}
     return render(request, "hog.html", context=context)

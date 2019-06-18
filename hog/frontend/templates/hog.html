@@ -3,6 +3,11 @@
 {% load humanize %}
 
 {% block content %}
+<script>
+  var location_code = undefined;
+  var hog_code = '{{ hog.code }}';
+</script>
+<script src="{% static 'main.js' %}"></script>
 
 
 <div class="row">
@@ -10,7 +15,9 @@
 </div>
  <div class="row">
    <div class="col-lg-6">
-     {% include '_card_wall.html' %}
+     <div class="card-wall">
+       <div id="card-wall"><span id="loading">Loading...</span></div>
+     </div>
    </div>
-</dov>
+</div>
 {% endblock %}
