@@ -175,7 +175,10 @@ $(document).ready(function() {
   drawCharts();
   loadWall(hog_code, location_code);
 
-  $(window).scroll(function() {
+  $(document.body).on('touchmove', onScroll); // for mobile
+  $(window).on('scroll', onScroll);
+
+  function onScroll() {
     if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
       var loader = $('#load-more-cards');
       var most_recent_id = loader.data('most-recent-id');
@@ -184,6 +187,6 @@ $(document).ready(function() {
         loadWall(hog_code, location_code, most_recent_id);
       }
    }
-});
+  }
 
 });;
