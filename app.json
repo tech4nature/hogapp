@@ -23,7 +23,7 @@
   ],
   "buildpacks": [
     {
-      "url": "community/apt"
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
     },
     {
       "url": "https://github.com/CheesecakeLabs/heroku-geo-buildpack.git"
