@@ -40,11 +40,10 @@ def make_poster(measurement_id):
                 raise BaseException(
                     "Could not run ffmpeg:\n\n{}".format(completed.stderr)
                 )
-
             try:
                 with open(os.path.join(d, "out01.jpg"), "rb") as f:
                     measurement.video_poster = SimpleUploadedFile(
-                        "poster.jpg", f.read()
+                        "{}.jpg".format(measurement.pk), f.read()
                     )
                     measurement.save()
                     success = True
@@ -53,11 +52,14 @@ def make_poster(measurement_id):
                             measurement.video_poster.url, delta
                         )
                     )
+                    break
             except FileNotFoundError:
                 # The delta didn't work. Try the next one
                 pass
+
     if not success:
         logger.warn("Unable to create poster for {}".format(measurement.video.url))
+
     return measurement
 
 

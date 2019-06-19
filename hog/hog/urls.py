@@ -99,6 +99,12 @@ class MeasurementSerializer(serializers.ModelSerializer):
 
 
 class MeasurementVideoSerializer(serializers.ModelSerializer):
+    def update(self, instance, validated_data):
+        """Rename the filename to match the measurement id
+        """
+        validated_data["video"].name = "{}.mp4".format(instance.pk)
+        return super().update(instance, validated_data)
+
     class Meta:
         model = Measurement
         fields = ["video"]
