@@ -165,11 +165,12 @@ def grouped_measurements(
         kwargs["location"] = location
     if most_recent_id:
         kwargs["id__lt"] = most_recent_id
+    max_measurements_per_card = 3  # this is a typical maximum, not including outliers
+    limit = max_cards * max_measurements_per_card
     measurements = (
         Measurement.objects.filter(**kwargs)
         .exclude(video="", measurement_type="video")
-        .order_by("id")
-        .reverse()
+        .order_by("-id")[:limit]
     )
     groups = []
 
@@ -182,6 +183,7 @@ def grouped_measurements(
     # XXX we should average measurements within group
     for measurement in measurements:
         if current_group_start is None:
+            # Start the first card in the pack
             current_group_start = measurement.observed_at
             current_group["header"] = measurement
             last_measurement = measurement
