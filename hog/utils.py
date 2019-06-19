@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 import subprocess
 import tempfile
 from subprocess import PIPE
@@ -35,7 +36,11 @@ def make_poster(measurement_id):
                 stdout=PIPE,
                 stderr=PIPE,
             )
-            assert completed.returncode == 0
+            if completed.returncode != 0:
+                raise BaseException(
+                    "Could not run ffmpeg:\n\n{}".format(completed.stderr)
+                )
+
             try:
                 with open(os.path.join(d, "out01.jpg"), "rb") as f:
                     measurement.video_poster = SimpleUploadedFile(

@@ -67,6 +67,13 @@ apt-get install ffmpeg
 
     ./manage.py worker
 
+## Run tests
+
+    ./manage.py test --settings=hog.test_settings
+
+
+# About the API
+
 ## View api
 
 Visit http://localhost:8000/api/

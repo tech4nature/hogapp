@@ -77,9 +77,9 @@ class MeasurementSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Check that weight and video measurements always include a hog
+        Check that weight measurements always include a hog
         """
-        if data["measurement_type"] in ["video", "weight"]:
+        if data["measurement_type"] in ["weight"]:
             if "hog_id" not in data:
                 raise serializers.ValidationError("You must provide a hog_id")
         return data
