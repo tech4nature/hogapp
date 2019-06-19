@@ -1,0 +1,43 @@
+{
+  "name": "HogApp",
+  "description": "Web app for recording and viewing Hedgehog Republic data",
+  "website": "http://www.hedgehogrepublic.org/",
+  "repository": "https://github.com/tech4nature/hogapp",
+  "success_url": "/",
+  "scripts": {
+    "postdeploy": "cd hog && echo 'create extension postgis' | python manage.py dbshell"
+  },
+  "env": {
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "An AWS key with write access to the `hogapp` bucket",
+      "value": "XXX"
+    },
+    "DJANGO_SECRET_KEY": {
+      "description": "The django secret key (qv)",
+      "generator": "secret"
+    }
+  },
+  "image": "heroku/python",
+  "addons": [
+    "heroku-postgresql:hobby-dev", "redistogo:nano"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/CheesecakeLabs/heroku-geo-buildpack.git"
+    },
+    {
+      "url": "heroku/python"
+    },
+
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    },
+    "worker": {
+      "quantity": 1,
+      "size": "free"
+    }
+  }
+}

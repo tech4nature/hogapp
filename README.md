@@ -71,6 +71,12 @@ apt-get install ffmpeg
 
     ./manage.py test --settings=hog.test_settings
 
+# Deploy via Heroku
+
+See `app.json` for config.
+
+When the app has been created, `git push heroku master` to deploy.
+
 
 # About the API
 
