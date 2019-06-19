@@ -46,14 +46,12 @@ def location(request, code):
             min_date = midpoint - min_range / 2
             max_date = midpoint + min_range / 2
             initial_resolution = "hour"
-    measurements = grouped_measurements(location=location)
     context = {
         "location": location,
         "min_date": min_date,
         "max_date": max_date,
         "num_measurements": num_measurements,
         "initial_resolution": initial_resolution,
-        "grouped_measurements": measurements,
     }
     return render(request, "location.html", context=context)
 
@@ -122,21 +120,33 @@ def hog_weight_chart(request, code):
     return render(request, "hog_weight_chart.html", context=context)
 
 
-def _add_location_measurement_to_group(group, group_duration):
+def _finalise_group(group, group_duration, add_location_only_measurements=False):
+    """Record the final measurement seen in the header, to support paging
+    through cards.
+
+    For groups that are hog-focussed, add location-only measurements,
+    so that the card lists hog activity *and* things that happened in
+    that location in one place.
+
+    """
+    # Record the last measurement id in the header, so we can page
+    # through them
     measurements = list(group.values())
     first_in_group = measurements[0]
     last_in_group = measurements[-1]
     group["header"].last_id = last_in_group.id
 
-    location = first_in_group.location
-    location_measurements = location.measurement_set.filter(
-        hog=None,
-        observed_at__gte=first_in_group.observed_at,
-        observed_at__lte=first_in_group.observed_at + timedelta(seconds=group_duration),
-    )
-    for measurement in location_measurements:
-        if measurement.measurement_type not in group:
-            group[measurement.measurement_type] = measurement
+    if add_location_only_measurements:
+        location = first_in_group.location
+        location_measurements = location.measurement_set.filter(
+            hog=None,
+            observed_at__gte=first_in_group.observed_at,
+            observed_at__lte=first_in_group.observed_at
+            + timedelta(seconds=group_duration),
+        )
+        for measurement in location_measurements:
+            if measurement.measurement_type not in group:
+                group[measurement.measurement_type] = measurement
     return group
 
 
@@ -168,6 +178,7 @@ def grouped_measurements(
     current_group_start = None
     last_measurement = None
     cards = 0
+    no_location = not location
     # XXX we should average measurements within group
     for measurement in measurements:
         if current_group_start is None:
@@ -188,10 +199,11 @@ def grouped_measurements(
             # window; or it's a string of temperatures
             current_group[measurement.measurement_type] = measurement
         else:
-            if True or not location:
-                current_group = _add_location_measurement_to_group(
-                    current_group, group_duration
-                )
+            current_group = _finalise_group(
+                current_group,
+                group_duration,
+                add_location_only_measurements=no_location,
+            )
             groups.append(current_group)
             cards += 1
             current_group = {}
@@ -202,10 +214,10 @@ def grouped_measurements(
                 break
         last_measurement = measurement
     if current_group:
-        if True or not location:
-            current_group = _add_location_measurement_to_group(
-                current_group, group_duration
-            )
+        current_group = _finalise_group(
+            current_group, group_duration, add_location_only_measurements=no_location
+        )
+
         groups.append(current_group)
     return groups
 
@@ -233,6 +245,5 @@ def card_wall_fragment(request):
 
 def hog(request, code):
     hog = Hog.objects.get(code=code)
-    measurements = grouped_measurements(hog=hog, max_cards=10)
     context = {"hog": hog}
     return render(request, "hog.html", context=context)

@@ -49,11 +49,15 @@ var map = new mapboxgl.Map({
 });
 map.addControl(new mapboxgl.NavigationControl());
 $.getJSON("/api/locations/?code={{ location.code }}&format=json", function(data) {
-  data.results.forEach(function(box) {
-    var coords = box.coords.coordinates;
-    new mapboxgl.Marker()
-      .setLngLat([coords[0], coords[1]])
+data.results.forEach(function(box) {
+    if(box.coords) {
+      var coords = box.coords.coordinates;
+      new mapboxgl.Marker()
+        .setLngLat([coords[0], coords[1]])
       .addTo(map);
+    } else {
+       $('#map').html("No location information!");
+    }
   });
 });
 </script>

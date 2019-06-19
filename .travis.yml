@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 python:
 - '3.6'
@@ -6,11 +7,17 @@ env:
     - DB_USER=postgres
     - DB_PASS=
     - DJANGO_SECRET_KEY=kjaslj
+    - AWS_SECRET_ACCESS_KEY=asdq3ad
 addons:
   postgresql: "9.6"
   apt:
     packages:
-    - postgresql-9.6-postgis-2.3
+    - postgresql-9.6-postgis-2.4
+    - gdal-bin
+    - libproj-dev
+    - libgeos-dev
+    - libspatialite-dev
+    - ffmpeg
 before_script:
   - psql -U postgres -c "create extension postgis"
 install:
@@ -18,7 +25,7 @@ install:
 before_script:
 - psql -c 'create database hog_test;' -U postgres
 script:
-- cd hog && python manage.py test
+- cd hog && python manage.py test --settings=hog.test_settings
 notifications:
   email:
   - seb.bacon@gmail.com
