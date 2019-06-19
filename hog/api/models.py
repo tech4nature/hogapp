@@ -6,6 +6,12 @@ from faker import Faker
 class Hog(models.Model):
     code = models.CharField(max_length=80, primary_key=True, validators=[validate_slug])
     name = models.CharField(max_length=200, blank=True, null=True)
+    avatar = models.FileField(
+        blank=True,
+        null=True,
+        upload_to="avatars",
+        help_text="Small square image of hog",
+    )
 
     def __str__(self):
         return self.name
