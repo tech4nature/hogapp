@@ -6,6 +6,7 @@ env:
     - DB_USER=postgres
     - DB_PASS=
     - DJANGO_SECRET_KEY=kjaslj
+    - AWS_SECRET_ACCESS_KEY=asdq3ad
 addons:
   postgresql: "9.6"
   apt:
