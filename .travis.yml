@@ -12,6 +12,10 @@ addons:
   apt:
     packages:
     - postgresql-9.6-postgis-2.3
+    - gdal-bin
+    - libproj-dev
+    - libgeos-dev
+    - libspatialite-dev
 before_script:
   - psql -U postgres -c "create extension postgis"
 install:
