@@ -68,6 +68,8 @@ if __name__ == "__main__":
     print("Adding a video:")
     print(upload_video("myplace", "hog-23", "hog/media/sample_file.mp4"))
     print()
+    print("Adding a hogless video:")
+    print(upload_video("myplace", None, "hog/media/sample_file.mp4"))
     print("All data for My Place")
     print(
         json.dumps(
