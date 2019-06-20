@@ -170,7 +170,7 @@ def grouped_measurements(
     measurements = (
         Measurement.objects.filter(**kwargs)
         .exclude(video="", measurement_type="video")
-        .order_by("-id")[:limit]
+        .order_by("-starred", "-id")[:limit]
     )
     groups = []
 
@@ -206,8 +206,12 @@ def grouped_measurements(
                 group_duration,
                 add_location_only_measurements=no_location,
             )
-            groups.append(current_group)
-            cards += 1
+            if len(current_group) > 1:
+                # when length is 1, the current group is only a
+                # header. This is an edge case in the first iteration
+                # of the loop, where group_dureation is zero
+                groups.append(current_group)
+                cards += 1
             current_group = {}
             current_group["header"] = measurement
             current_group[measurement.measurement_type] = measurement

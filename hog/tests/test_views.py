@@ -7,12 +7,13 @@ from django.utils import timezone
 from api.models import Measurement
 from .factory import create_location
 from .factory import create_hog
+from .factory import create_measurement
 
 from frontend.views import grouped_measurements
 
 
+@patch("utils.delayed_make_poster")
 class GroupedMeasurementTests(TestCase):
-    @patch("utils.delayed_make_poster")
     def test_incomplete_videos(self, mock_delayed_make_poster):
         """Check we don't attempt to display videos that have not been uploaded
         """
@@ -36,3 +37,13 @@ class GroupedMeasurementTests(TestCase):
         self.assertEqual(
             measurements, [{"header": uploaded_video, "video": uploaded_video}]
         )
+
+    def test_ordering(self, mock_delayed_make_poster):
+        hog = create_hog()
+        create_measurement(hog=hog, measurement_type="weight", measurement=300.5)
+        create_measurement(
+            hog=hog, measurement_type="weight", measurement=340.5, starred=True
+        )
+        groups = grouped_measurements(hog=hog.code, group_duration=0)
+        self.assertEqual(groups[0]["weight"].starred, True)
+        self.assertEqual(groups[1]["weight"].starred, False)

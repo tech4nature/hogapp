@@ -55,6 +55,7 @@ class Measurement(models.Model):
     video = models.FileField(blank=True, null=True, upload_to="videos")
     video_poster = models.FileField(blank=True, null=True, upload_to="posters")
     observed_at = models.DateTimeField(db_index=True)
+    starred = models.BooleanField(db_index=True, default=False)
 
     def __str__(self):
         return "{}:{} at {}".format(
