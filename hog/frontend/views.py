@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.db.models import Max, Min
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.template.loader import render_to_string
 
@@ -26,7 +27,7 @@ def hogs(request):
 
 
 def location(request, code):
-    location = Location.objects.get(code=code)
+    location = get_object_or_404(Location, code=code)
     measurements = Measurement.objects.filter(location=location)
     num_measurements = measurements.count()
     initial_resolution = "day"
@@ -57,7 +58,7 @@ def location(request, code):
 
 
 def location_temp_chart(request, code):
-    location = Location.objects.get(code=code)
+    location = get_object_or_404(Location, code=code)
     measurements = Measurement.objects.filter(
         location=location, measurement_type__in=["in_temp", "out_temp"]
     )
@@ -90,7 +91,7 @@ def location_temp_chart(request, code):
 
 
 def hog_weight_chart(request, code):
-    hog = Hog.objects.get(code=code)
+    hog = get_object_or_404(Hog, code=code)
     measurements = Measurement.objects.filter(hog=hog, measurement_type="weight")
     num_measurements = measurements.count()
     initial_resolution = "day"
