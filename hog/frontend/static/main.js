@@ -173,7 +173,13 @@ $(document).ready(function() {
   }
 
   drawCharts();
-  loadWall(hog_code, location_code);
+
+  var most_recent_id;
+  if (window.location.hash) {
+    // subtract one so we jump to the right one
+    most_recent_id = parseInt(window.location.hash.substring(1)) + 1;
+  }
+  loadWall(hog_code, location_code, most_recent_id);
 
   $(document.body).on('touchmove', onScroll); // for mobile
   $(window).on('scroll', onScroll);
