@@ -6,12 +6,11 @@
 
     <meta property="og:title" content="{{ title }}" />
     <meta property="og:type" content="{{ og_type }}" />
-    <meta property="og:url" content="http://www.imdb.com/title/tt0117500/" />
+    <meta property="og:url" content="{{ request.path }}" />
     <meta property="og:image" content="{% if image %}{{ image }}{% else %}{% static 'cute_hog.jpg' %}{% endif %}" />
 {% endblock %}
 
 {% block content %}
-
 
 <div class="row">
    <div class="col-lg-6">

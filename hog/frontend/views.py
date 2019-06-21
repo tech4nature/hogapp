@@ -267,7 +267,7 @@ def measurement(request, measurement_id):
             title = "Measurement at {}".format(measurement.location)
     if measurement.video_poster:
         image = measurement.video_poster.url
-    elif measurement.hog.avatar:
+    elif measurement.hog and measurement.hog.avatar:
         image = measurement.hog.avatar.url
     else:
         image = None
@@ -279,6 +279,6 @@ def measurement(request, measurement_id):
     else:
         og_type = "website"
 
-    context = {"group": group, "title": title, "image": image, "type": og_type}
+    context = {"group": group, "title": title, "image": image, "og_type": og_type}
 
     return render(request, "measurement.html", context=context)
