@@ -250,6 +250,35 @@ def card_wall_fragment(request):
 
 
 def hog(request, code):
-    hog = Hog.objects.get(code=code)
+    hog = get_object_or_404(Hog, code=code)
     context = {"hog": hog}
     return render(request, "hog.html", context=context)
+
+
+def measurement(request, measurement_id):
+    measurement = get_object_or_404(Measurement, pk=measurement_id)
+    group = {"header": measurement, measurement.measurement_type: measurement}
+    if measurement.hog:
+        title = "{} at {}".format(measurement.hog, measurement.location)
+    else:
+        if measurement.measurement_type == "video":
+            title = "Video at {}".format(measurement.location)
+        else:
+            title = "Measurement at {}".format(measurement.location)
+    if measurement.video_poster:
+        image = measurement.video_poster.url
+    elif measurement.hog.avatar:
+        image = measurement.hog.avatar.url
+    else:
+        image = None
+    title += " in the Hedgehog Republic, {}".format(
+        measurement.observed_at.strftime("%d/%m/%Y")
+    )
+    if measurement.measurement_type == "video":
+        og_type = "video.other"
+    else:
+        og_type = "website"
+
+    context = {"group": group, "title": title, "image": image, "type": og_type}
+
+    return render(request, "measurement.html", context=context)

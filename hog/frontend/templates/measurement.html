@@ -1,0 +1,41 @@
+{% extends "_base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block opengraph_headers %}
+
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:type" content="{{ og_type }}" />
+    <meta property="og:url" content="http://www.imdb.com/title/tt0117500/" />
+    <meta property="og:image" content="{% if image %}{{ image }}{% else %}{% static 'cute_hog.jpg' %}{% endif %}" />
+{% endblock %}
+
+{% block content %}
+
+
+<div class="row">
+   <div class="col-lg-6">
+  <h2>Something happened in the Hedgehog Republic</h2>
+  <p><small class="text-muted">on {{ group.header.observed_at|date:"F jS, Y"}} at {{ group.header.observed_at|date:"H:i"}}</small></p>
+  </div>
+</div>
+
+ <div class="row">
+   <div class="col-lg-6">
+     <div class="card-wall">
+       {% include '_card.html' %}
+       <div id="card-wall"></div>
+     </div>
+   </div>
+   <div class="col-lg-6">
+   </div>
+ </div>
+
+ <div class="row">
+   <div class="col-lg-6">
+     <hr>
+     <p class="lead">{% if group.header.hog %}You can <a href="{% url 'hog' code=group.header.hog.pk %}">see {{ group.header.hog }}'s most recent activity here</a>, and <a href="{% url 'location' code=group.header.location.pk %}">all recent activity at {{ group.header.location }} here</a>.{% else %}You can see the <a href="{% url 'location' code=group.header.location.pk %}">all the recent activity at {{ group.header.location }} here</a>.{% endif %}</p>
+   </div>
+ </div>
+
+{% endblock %}

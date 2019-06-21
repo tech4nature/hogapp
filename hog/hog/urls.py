@@ -35,6 +35,7 @@ from frontend.views import hog_weight_chart
 from frontend.views import locations
 from frontend.views import hog
 from frontend.views import hogs
+from frontend.views import measurement
 from frontend.views import card_wall_fragment
 
 from rest_framework import routers, serializers, viewsets, status
@@ -215,6 +216,7 @@ urlpatterns = [
     path("", index, name="index"),
     path("locations/", locations, name="locations"),
     path("hogs/", hogs, name="hogs"),
+    path("measurement/<slug:measurement_id>", measurement, name="measurement"),
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("location/<slug:code>", location, name="location"),
