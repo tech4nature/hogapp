@@ -10,7 +10,8 @@
     <meta property="og:image" content="{% if image %}{{ image }}{% else %}{% static 'cute_hog.jpg' %}{% endif %}" />
 {% endblock %}
 
-{% block content %}
+    {% block content %}
+<script src="{% static 'main.js' %}"></script>
 
 <div class="row">
    <div class="col-lg-6">

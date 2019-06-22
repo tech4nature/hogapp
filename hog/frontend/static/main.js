@@ -171,7 +171,8 @@ $(document).ready(function() {
       }
     );
   }
-
+  var hog_code;
+  var location_code;
   drawCharts();
 
   var most_recent_id;
@@ -184,6 +185,37 @@ $(document).ready(function() {
   $(document.body).on('touchmove', onScroll); // for mobile
   $(window).on('scroll', onScroll);
 
+
+
+  // Tooltip
+
+  function setTooltip(btn, message) {
+    $(btn).tooltip('hide')
+      .attr('title', message)
+      .tooltip('show');
+  }
+
+  function hideTooltip(btn) {
+    setTimeout(function() {
+      $(btn).tooltip('hide');
+    }, 1000);
+  }
+
+  clipboard = new ClipboardJS('.measure-link');
+
+  clipboard.on('error', function(e) {
+    var link = $(e.trigger).next()
+    link.css('visibility', 'visible');
+    setTooltip(link, 'Press Ctrl+C to copy');
+    hideTooltip(link);
+  });
+
+  clipboard.on('success', function(e) {
+    var link = $(e.trigger).next()
+    link.css('margin', 0);
+    setTooltip(link, 'Copied!');
+    hideTooltip(link);
+  });
   function onScroll() {
     if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
       var loader = $('#load-more-cards');

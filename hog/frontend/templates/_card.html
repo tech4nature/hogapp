@@ -3,7 +3,6 @@
 
    <div class="card {% if group.header.starred %}starred{% endif %}">
      <div class="card-header">
-      <a name="{{ group.header.id }}"></a>
       {% if not group.header.hog or not group.header.hog.avatar %}
         <img src="{% static 'default_hog_avatar.png' %}" class="img-circle float-left">
       {% else %}
@@ -48,4 +47,8 @@
       </video>
     </div>
     {% endif %}
+    <div class="card-footer">
+      <!-- this is for search engine spiders --><a class="no-show" href="{% url 'measurement' measurement_id=group.header.id %}">Link to measure on a single page</a>
+      <span class="measure-link" name="{{ group.header.id }}" data-clipboard-target="#link-text-{{group.header.id}}" href="{% url 'measurement' measurement_id=group.header.id %}">get link...</span> <input id="link-text-{{group.header.id}}" class="hidden" type="text" size="40" value="{{ request.scheme }}://{{ request.get_host }}{% url 'measurement' measurement_id=group.header.id %}">
+    </div>
    </div>
