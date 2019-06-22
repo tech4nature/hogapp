@@ -182,7 +182,8 @@ $(document).ready(function() {
   }
   loadWall(hog_code, location_code, most_recent_id);
 
-  $(document.body).on('touchmove', onScroll); // for mobile
+  //$(document.body).on('scroll', onScroll); // for mobile
+  $(window).on('scrollstop', onScroll);
   $(window).on('scroll', onScroll);
 
 
@@ -217,7 +218,12 @@ $(document).ready(function() {
     hideTooltip(link);
   });
   function onScroll() {
-    if($(window).scrollTop() + $(window).height() > $(document).height() - 50) {
+    var scrolled = $(window).scrollTop(),
+        screenHeight = $(window).innerHeight(),
+        contentHeight = $("main").outerHeight(),
+        header = $("nav").outerHeight(),
+        scrollEnd = contentHeight - screenHeight + header - 550; // not sure why I need the 150 on mobile...
+    if (scrolled >= scrollEnd) {
       var loader = $('#load-more-cards');
       var most_recent_id = loader.data('most-recent-id');
       if (most_recent_id) {
