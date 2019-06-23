@@ -2,6 +2,7 @@ Django
 djangorestframework
 djangorestframework-gis
 django-heroku
+django-map-widgets
 markdown       # Markdown support for the browsable API.
 django-filter  # Filtering support for djangorestframework
 faker

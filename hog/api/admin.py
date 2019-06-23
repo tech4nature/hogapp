@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.contrib.gis.db import models
+
+from mapwidgets.widgets import GooglePointFieldWidget
 
 from .models import Location
 from .models import Measurement
@@ -10,6 +13,10 @@ class MeasurementAdmin(admin.ModelAdmin):
     list_filter = ("measurement_type", "observed_at", "hog", "location", "starred")
 
 
-admin.site.register(Location)
+class LocationAdmin(admin.ModelAdmin):
+    formfield_overrides = {models.PointField: {"widget": GooglePointFieldWidget}}
+
+
+admin.site.register(Location, LocationAdmin)
 admin.site.register(Measurement, MeasurementAdmin)
 admin.site.register(Hog)

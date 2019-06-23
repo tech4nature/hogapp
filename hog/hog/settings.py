@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "rest_framework_swagger",
     "rest_framework_gis",
     "django_filters",
+    "mapwidgets",
     "api",
     "frontend",
 ]
@@ -159,6 +160,18 @@ AWS_AUTO_CREATE_BUCKET = True
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "public,max-age=86400"}
 AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = False
+
+
+MAP_WIDGETS = {
+    "GoogleStaticMapWidget": (
+        ("zoom", 15),
+        ("size", "320x320"),
+        ("thumbnail_size", "100x100"),
+    ),
+    "GoogleStaticMapMarkerSettings": (("color", "green"),),
+    "GOOGLE_MAP_API_KEY": os.environ["GOOGLE_MAP_API_KEY"],
+}
+
 # Configure Django App for Heroku.
 import django_heroku
 

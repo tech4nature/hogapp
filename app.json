@@ -15,6 +15,9 @@
     "DJANGO_SECRET_KEY": {
       "description": "The django secret key (qv)",
       "generator": "secret"
+    },
+    "GOOGLE_MAP_API_KEY": {
+      "description": "Google Maps API key (for django admin)"
     }
   },
   "image": "heroku/python",
