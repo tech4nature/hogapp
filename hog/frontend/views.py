@@ -11,7 +11,16 @@ from api.models import Measurement
 
 
 def index(request):
-    return render(request, "index.html")
+    videos = (
+        Measurement.objects.filter(measurement_type="video")
+        .order_by("-starred", "-observed_at")
+        .exclude(video="")[:2]
+    )
+    grouped = [
+        {"header": x, x.measurement_type: x, "video": x, x.measurement_type: x}
+        for x in videos
+    ]
+    return render(request, "index.html", context={"videos": grouped})
 
 
 def locations(request):

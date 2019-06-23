@@ -6,13 +6,32 @@
 <h1>Welcome to Hedgehog Republic!</h1>
 
 <p>The hedgehog republic is the idea that by joining gardens together and closely monitoring the hedgehogs we will be able to maintain and grow the populations.</p>
-<p>Explore the latest monitoring info by clicking on a pin below</p>
+<p>Explore the latest monitoring info by clicking on a pin below:</p>
 <h3>Our boxes</h3>
 
 <div class="row">
 <div class="col">
   <div id="map"></div>
 </div>
+</div>
+<hr>
+<div class="row">
+  <div class="col">
+    <h3>Recent videos</h3>
+  </div>
+</div>
+
+<div class="row">
+  {% for group in videos %}
+
+  <div class="col-lg-6">
+    <div class="card-wall">
+      <div id="card-wall">
+          {% include '_card.html' %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 
 <script>
