@@ -4,11 +4,11 @@
    <div class="card {% if group.header.starred %}starred{% endif %}">
      <div class="card-header">
       {% if not group.header.hog or not group.header.hog.avatar %}
-        <img src="{% static 'default_hog_avatar.png' %}" class="img-circle float-left">
+        <img src="{% static 'cute_hog.jpg' %}" class="img-circle float-left">
       {% else %}
         <img src="{{ group.header.hog.avatar.url }}" class="img-circle float-left">
       {% endif %}
-      <h5 class="card-title">{% if group.header.hog %}<a href="{% url 'hog' code=group.header.hog.code %}">{{ group.header.hog|default:"Somebody" }}</a> visited {% else %}Measurement at {% endif %}<a href="{% url 'location' code=group.header.location.code %}">{{ group.header.location }}</a></a></h5>
+      <h5 class="card-title">{% if group.header.hog %}<a href="{% url 'hog' code=group.header.hog.code %}">{{ group.header.hog|default:"Somebody" }}</a> at {% endif %}<a href="{% url 'location' code=group.header.location.code %}">{{ group.header.location }}</a></a></h5>
       <p class="card-text"><small class="text-muted">{{ group.header.observed_at|naturaltime }}</small>
         {% if group.header.starred %}<span class="badge badge-warning">Highlight</span>{% endif %}
       </p>

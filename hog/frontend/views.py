@@ -174,7 +174,6 @@ def grouped_measurements(
         .order_by("-starred", "-id")[:limit]
     )
     groups = []
-
     current_group = {}
 
     current_group_start = None
@@ -252,7 +251,18 @@ def card_wall_fragment(request):
 
 def hog(request, code):
     hog = get_object_or_404(Hog, code=code)
-    context = {"hog": hog}
+    max_date = (
+        hog.measurement_set.order_by("observed_at").last().observed_at.timestamp()
+    )
+    min_date = (
+        hog.measurement_set.order_by("observed_at").first().observed_at.timestamp()
+    )
+    context = {
+        "hog": hog,
+        "min_date": min_date,
+        "max_date": max_date,
+        "initial_resolution": "day",
+    }
     return render(request, "hog.html", context=context)
 
 

@@ -171,11 +171,17 @@ $(document).ready(function() {
       }
     );
   }
-  var hog_code;
-  var location_code;
+  if (typeof hog_code === 'undefined') {
+    hog_code = undefined;
+  }
+  if (typeof location_code === 'undefined') {
+    location_code = undefined;
+  }
+  if (typeof most_recent_id === 'undefined') {
+    most_recent_id = undefined;
+  }
   drawCharts();
 
-  var most_recent_id;
   if (window.location.hash) {
     // subtract one so we jump to the right one
     most_recent_id = parseInt(window.location.hash.substring(1)) + 1;
