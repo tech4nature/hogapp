@@ -18,7 +18,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # '/home/seb/Code/hogapp/hog/media'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-# home/seb/Code/hogapp/hog/media/sample_file_jxKuhu3.jpg
 # URL that handles the media served from MEDIA_ROOT, used for managing
 # stored files. It must end in a slash if set to a non-empty
 # value. You will need to configure these files to be served in both
@@ -133,7 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(MEDIA_ROOT, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # REST framework
@@ -175,5 +174,5 @@ MAP_WIDGETS = {
 # Configure Django App for Heroku.
 import django_heroku
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), staticfiles=False)
 DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
