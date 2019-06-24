@@ -62,8 +62,8 @@ def make_faker():
     return fake
 
 
-NUM_BOXES = 4
-NUM_HOGS_PER_BOX = 3
+NUM_BOXES = 2
+NUM_HOGS = 2
 
 
 class Command(BaseCommand):
@@ -71,12 +71,14 @@ class Command(BaseCommand):
         fake = make_faker()
         start_date = datetime(2018, 10, 1, 1, tzinfo=pytz.utc)
         end_date = datetime(2019, 4, 1, 1, tzinfo=pytz.utc)
-        seconds = list(range(0, int((end_date - start_date).total_seconds())))
         with transaction.atomic():
             Measurement.objects.all().delete()
             Location.objects.all().delete()
             Hog.objects.all().delete()
+            observed_at = start_date
+            boxes = []
             for box in range(0, NUM_BOXES):
+                print("box {}".format(box))
                 box1, _ = Location.objects.get_or_create(
                     code="box-" + fake.ean13(),
                     location_type="box",
@@ -87,47 +89,55 @@ class Command(BaseCommand):
                         float(fake.coordinate(center=51.74220, radius=0.002)),
                     ),
                 )
-                for _ in range(0, 1800):
-                    observed_at = start_date + timedelta(seconds=random.choice(seconds))
-                    out_temp = fake.temperature(observed_at)
-                    Measurement.objects.create(
-                        location=box1,
-                        measurement_type="out_temp",
-                        measurement=out_temp,
-                        observed_at=observed_at,
+                boxes.append(box1)
+            hogs = []
+            for i in range(0, NUM_HOGS):
+                hog, _ = Hog.objects.get_or_create(code="hog-{}".format(i), name=str(i))
+                hogs.append(hog)
+
+            while observed_at < end_date:
+                print("  measurement {}".format(_))
+                box1 = random.choice(boxes)
+                observed_at += timedelta(seconds=random.choice(range(0, 60 * 60 * 24)))
+                out_temp = fake.temperature(observed_at)
+                Measurement.objects.create(
+                    location=box1,
+                    measurement_type="out_temp",
+                    measurement=out_temp,
+                    observed_at=observed_at,
+                )
+                in_temp = (out_temp * 10 + random.choice(range(0, 30))) / 10.0
+                Measurement.objects.create(
+                    location=box1,
+                    measurement_type="in_temp",
+                    measurement=in_temp,
+                    observed_at=observed_at + timedelta(milliseconds=500),
+                )
+
+                hog = random.choice(hogs)
+                print("  hog {}".format(hog))
+                should_visit = random.choice([0, 1, 2]) == 1
+                time_jitter = random.choice(range(60, 60 * 60 * 2))
+                if should_visit:
+                    print("   uploading a vid")
+                    vid = random.choice(
+                        ["hog2.mp4", "hog3.mp4", "hog4.mp4", "hog5.mp4"]
                     )
-                    in_temp = (out_temp * 10 + random.choice(range(0, 30))) / 10.0
-                    Measurement.objects.create(
-                        location=box1,
-                        measurement_type="in_temp",
-                        measurement=in_temp,
-                        observed_at=observed_at + timedelta(milliseconds=500),
-                    )
-                for hog in range(0, NUM_HOGS_PER_BOX):
-                    hog1, _ = Hog.objects.get_or_create(
-                        code="hog-" + fake.ean13(), name=fake.name()
-                    )
-                    for _ in range(0, random.choice(range(5, 100))):
-                        with open(
-                            os.path.join(settings.MEDIA_ROOT, "sample_file.mp4"), "rb"
-                        ) as f:
-                            fake_video = File(f)
-                            # A random number of visits where each hog gets weighed
-                            observed_at = start_date + timedelta(
-                                seconds=random.choice(seconds)
-                            )
-                            weight = fake.weight(observed_at)
-                            Measurement.objects.create(
-                                hog=hog1,
-                                location=box1,
-                                measurement_type="weight",
-                                measurement=weight,
-                                observed_at=observed_at,
-                            )
-                            m = Measurement.objects.create(
-                                hog=hog1,
-                                location=box1,
-                                measurement_type="video",
-                                observed_at=observed_at,
-                            )
-                            m.video.save("sample_video.mp4", fake_video)
+                    with open(os.path.join(settings.MEDIA_ROOT, vid), "rb") as f:
+                        fake_video = File(f)
+                        # A random number of visits where each hog gets weighed
+                        weight = fake.weight(observed_at)
+                        Measurement.objects.create(
+                            hog=hog,
+                            location=box1,
+                            measurement_type="weight",
+                            measurement=weight,
+                            observed_at=observed_at + timedelta(seconds=time_jitter),
+                        )
+                        m = Measurement.objects.create(
+                            hog=hog,
+                            location=box1,
+                            measurement_type="video",
+                            observed_at=observed_at + timedelta(seconds=time_jitter),
+                        )
+                        m.video.save("sample_video.mp4", fake_video)
