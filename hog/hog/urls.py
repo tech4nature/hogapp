@@ -229,4 +229,4 @@ urlpatterns = [
     path("card_wall_fragment", card_wall_fragment, name="card_wall_fragment"),
     path("hog/<slug:code>/weight_chart", hog_weight_chart, name="hog_weight_chart"),
     path(r"docs/", get_swagger_view(title="Hog API")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
