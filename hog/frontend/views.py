@@ -260,12 +260,15 @@ def card_wall_fragment(request):
 
 def hog(request, code):
     hog = get_object_or_404(Hog, code=code)
-    max_date = (
-        hog.measurement_set.order_by("observed_at").last().observed_at.timestamp()
-    )
-    min_date = (
-        hog.measurement_set.order_by("observed_at").first().observed_at.timestamp()
-    )
+    if hog.measurement_set.count():
+        max_date = (
+            hog.measurement_set.order_by("observed_at").last().observed_at.timestamp()
+        )
+        min_date = (
+            hog.measurement_set.order_by("observed_at").first().observed_at.timestamp()
+        )
+    else:
+        min_date = max_date = None
     context = {
         "hog": hog,
         "min_date": min_date,
