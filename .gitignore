@@ -1,6 +1,6 @@
 .env
 hog/media/*
-!hog/media/sample_file.mp4
+!hog/media/*.mp4
 venv
 *~
 .~lock*
