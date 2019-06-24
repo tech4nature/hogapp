@@ -25,13 +25,12 @@
 
   <div class="col-lg-6">
     <div class="card-wall">
-      <div id="card-wall">
-          {% include '_card.html' %}
-      </div>
+      {% include '_card.html' %}
     </div>
   </div>
   {% endfor %}
 </div>
+<script src="{% static 'main.js' %}"></script>
 
 <script>
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYmFjb24iLCJhIjoiY2ltdGYwZGJkMDA2a3Z3bTFucjgyZnlvdCJ9.hplRw1YZqso0DZNteF9S-g';
