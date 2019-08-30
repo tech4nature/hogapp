@@ -244,10 +244,6 @@ def card_wall_fragment(request):
     most_recent_token = request.GET.get("most_recent_token")
     location = request.GET.get("location")
     hog = request.GET.get("hog")
-    import pdb
-
-    pdb.set_trace()
-
     measurements = grouped_measurements(
         hog=hog,
         max_cards=max_cards,
