@@ -7,7 +7,7 @@ from api.models import set_ordering_token
 
 def set_default_ordering(apps, schema_editor):
     for m in Measurement.objects.all():
-        set_ordering_token(m)
+        set_ordering_token(None, m, None, None, None, None)
 
 
 class Migration(migrations.Migration):
