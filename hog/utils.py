@@ -18,13 +18,19 @@ logger = logging.getLogger(__name__)
 def make_poster(measurement_id):
     measurement = Measurement.objects.get(pk=measurement_id)
     success = False
+    video_location = measurement.video.url
+    if "://" not in video_location:
+        # We can't get it over the network; assume it's on local file
+        # storage (as is the case when testing)
+        video_location = measurement.video.path
+
     with tempfile.TemporaryDirectory() as d:
         for delta in ["0.4", "0.2", "0.1", "0.01"]:
             completed = subprocess.run(
                 [
                     "ffmpeg",
                     "-i",
-                    measurement.video.url,
+                    video_location,
                     "-vf",
                     "select=gt(scene\,{})".format(delta),
                     "-frames:v",

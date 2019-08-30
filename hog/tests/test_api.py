@@ -1,6 +1,7 @@
 from unittest.mock import patch
 import os
 
+from django.conf import settings
 from django.test import TestCase
 
 from rest_framework.test import APIClient
@@ -15,7 +16,8 @@ from .factory import dummy_video
 
 class UtilTests(TestCase):
     @patch("utils.Queue")
-    def test_video_creation(self, mock_queue):
+    @patch("botocore.client.BaseClient._make_api_call")
+    def test_video_creation(self, mock_boto, mock_queue):
         """Check we are able to POST/PUT a video
         """
         location = create_location()
@@ -38,7 +40,15 @@ class UtilTests(TestCase):
         )
         # Check the video exists
         measurement = Measurement.objects.get(pk=measurement_id)
-        self.assertTrue(os.path.exists(response.json()["video"]))
+        expected_extension = video.name.split(".")[-1]
+        # 'https://hogapp.s3.amazonaws.com/videos/1.mp4'
+        expected_url = "https://{}.s3.amazonaws.com/{}/{}.{}".format(
+            settings.AWS_STORAGE_BUCKET_NAME,
+            settings.AWS_VIDEO_BUCKET,
+            measurement_id,
+            expected_extension,
+        )
+        self.assertEqual(response.json()["video"], expected_url)
         self.assertFalse(measurement.video_poster)
 
         # Check the poster creation is pushed to the queue

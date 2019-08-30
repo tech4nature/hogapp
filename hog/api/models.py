@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.validators import validate_slug
 from faker import Faker
@@ -52,8 +53,10 @@ class Measurement(models.Model):
         max_length=10, choices=MEASUREMENT_TYPE_CHOICES, db_index=True
     )
     measurement = models.FloatField(blank=True, null=True)
-    video = models.FileField(blank=True, null=True, upload_to="videos")
-    video_poster = models.FileField(blank=True, null=True, upload_to="posters")
+    video = models.FileField(blank=True, null=True, upload_to=settings.AWS_VIDEO_BUCKET)
+    video_poster = models.FileField(
+        blank=True, null=True, upload_to=settings.AWS_POSTER_BUCKET
+    )
     observed_at = models.DateTimeField(db_index=True)
     starred = models.BooleanField(db_index=True, default=False)
 

@@ -14,7 +14,8 @@ from frontend.views import grouped_measurements
 
 @patch("utils.delayed_make_poster")
 class GroupedMeasurementTests(TestCase):
-    def test_incomplete_videos(self, mock_delayed_make_poster):
+    @patch("botocore.client.BaseClient._make_api_call")
+    def test_incomplete_videos(self, mock_boto, mock_delayed_make_poster):
         """Check we don't attempt to display videos that have not been uploaded
         """
         hog = create_hog()
