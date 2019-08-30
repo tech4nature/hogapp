@@ -1,3 +1,6 @@
 DB_USER=hog
 DB_PASS=xxxxxx
 DJANGO_SECRET_KEY="k8g*$)^s!ur^866aaz80k@xmrve$1c)^t1o3(scnh#)$r4-nj@"
+DATABASE_URL=postgres://root:root@localhost/hogapp
+AWS_SECRET_ACCESS_KEY=123
+GOOGLE_MAP_API_KEY=123
