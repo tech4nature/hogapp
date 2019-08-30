@@ -17,17 +17,14 @@ class UtilTests(TestCase):
         hog = create_hog()
         location = create_location()
         observed_at = timezone.now()
-        with self.settings(
-            DEFAULT_FILE_STORAGE="django.core.files.storage.FileSystemStorage"
-        ):
-            with dummy_video() as f:
-                uploaded_video = Measurement.objects.create(
-                    hog=hog,
-                    location=location,
-                    measurement_type="video",
-                    observed_at=observed_at,
-                    video=SimpleUploadedFile("hog.mp4", f.read()),
-                )
-            make_poster(uploaded_video.pk)
-            uploaded_video.refresh_from_db()
-            self.assertTrue(uploaded_video.video_poster)
+        with dummy_video() as f:
+            uploaded_video = Measurement.objects.create(
+                hog=hog,
+                location=location,
+                measurement_type="video",
+                observed_at=observed_at,
+                video=SimpleUploadedFile("hog.mp4", f.read()),
+            )
+        make_poster(uploaded_video.pk)
+        uploaded_video.refresh_from_db()
+        self.assertTrue(uploaded_video.video_poster)
