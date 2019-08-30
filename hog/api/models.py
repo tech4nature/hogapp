@@ -88,7 +88,8 @@ def set_ordering_token(sender, instance, created, raw, using, update_fields, **k
         ordering_token_prefix = "starred-"
     else:
         ordering_token_prefix = ""
-    # left-pad with up to nine zeros as this is the length of a 4-byte signed int, i.e. max value in postgres
-    ordering_token = "{}{:0>10}".format(ordering_token_prefix, instance.pk)
+    ordering_token = "{}{}".format(
+        ordering_token_prefix, instance.observed_at.timestamp()
+    )
     # We use `update` rather than `save` to avoid recursion
     Measurement.objects.filter(pk=instance.pk).update(ordering_token=ordering_token)
