@@ -63,6 +63,10 @@ apt-get install ffmpeg
 
     ./manage.py runserver
 
+To sidestep the S3 storage functionality and serve files off the local filesystem, use the `local_settings`:
+
+    ./manage.py runserver  --settings=hog.local_settings
+
 ## Run redis worker
 
     ./manage.py worker
