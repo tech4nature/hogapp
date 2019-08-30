@@ -45,4 +45,6 @@ def create_measurement(**kwargs):
         kwargs["location"] = create_location()
     if "observed_at" not in kwargs:
         kwargs["observed_at"] = timezone.now()
-    return Measurement.objects.create(**kwargs)
+    m = Measurement.objects.create(**kwargs)
+    m.refresh_from_db()  # to account for post-save hooks
+    return m

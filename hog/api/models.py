@@ -1,6 +1,9 @@
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.validators import validate_slug
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 from faker import Faker
 
 
@@ -59,6 +62,7 @@ class Measurement(models.Model):
     )
     observed_at = models.DateTimeField(db_index=True)
     starred = models.BooleanField(db_index=True, default=False)
+    ordering_token = models.TextField(db_index=True)
 
     def __str__(self):
         return "{}:{} at {}".format(
@@ -76,3 +80,14 @@ class Measurement(models.Model):
 
     class Meta:
         ordering = ["observed_at"]
+
+
+@receiver(post_save, sender=Measurement)
+def set_ordering_token(sender, instance, created, raw, using, update_fields, **kwargs):
+    if instance.starred:
+        ordering_token_prefix = "starred-"
+    else:
+        ordering_token_prefix = ""
+    ordering_token = ordering_token_prefix + str(instance.pk)
+    # We use `update` rather than `save` to avoid recursion
+    Measurement.objects.filter(pk=instance.pk).update(ordering_token=ordering_token)

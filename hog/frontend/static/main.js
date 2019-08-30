@@ -151,10 +151,10 @@ $(document).ready(function() {
     }
   }
 
-  function loadWall(hog_code, location_code, most_recent_id) {
+  function loadWall(hog_code, location_code, most_recent_token) {
     var url = '/card_wall_fragment?';
-    if (typeof most_recent_id !== 'undefined') {
-      url += 'most_recent_id=' + most_recent_id + '&';
+    if (typeof most_recent_token !== 'undefined') {
+      url += 'most_recent_token=' + most_recent_token + '&';
     }
     if (typeof hog_code !== 'undefined') {
       url += 'hog=' + hog_code + '&';
@@ -177,16 +177,12 @@ $(document).ready(function() {
   if (typeof location_code === 'undefined') {
     location_code = undefined;
   }
-  if (typeof most_recent_id === 'undefined') {
-    most_recent_id = undefined;
+  if (typeof most_recent_token === 'undefined') {
+    most_recent_token = undefined;
   }
   drawCharts();
 
-  if (window.location.hash) {
-    // subtract one so we jump to the right one
-    most_recent_id = parseInt(window.location.hash.substring(1)) + 1;
-  }
-  loadWall(hog_code, location_code, most_recent_id);
+  loadWall(hog_code, location_code, most_recent_token);
 
   //$(document.body).on('scroll', onScroll); // for mobile
   $(window).on('scrollstop', onScroll);
@@ -231,10 +227,10 @@ $(document).ready(function() {
         scrollEnd = contentHeight - screenHeight + header - 550; // not sure why I need the 150 on mobile...
     if (scrolled >= scrollEnd) {
       var loader = $('#load-more-cards');
-      var most_recent_id = loader.data('most-recent-id');
-      if (most_recent_id) {
+      var most_recent_token = loader.data('most-recent-token');
+      if (most_recent_token) {
         loader.remove();
-        loadWall(hog_code, location_code, most_recent_id);
+        loadWall(hog_code, location_code, most_recent_token);
       }
    }
   }

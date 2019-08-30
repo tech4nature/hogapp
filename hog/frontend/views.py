@@ -144,7 +144,7 @@ def _finalise_group(group, group_duration, add_location_only_measurements=False)
     measurements = list(group.values())
     first_in_group = measurements[0]
     last_in_group = measurements[-1]
-    group["header"].last_id = last_in_group.id
+    group["header"].most_recent_token = last_in_group.ordering_token
 
     if add_location_only_measurements:
         location = first_in_group.location
@@ -161,7 +161,7 @@ def _finalise_group(group, group_duration, add_location_only_measurements=False)
 
 
 def grouped_measurements(
-    hog=None, location=None, group_duration=3600, max_cards=20, most_recent_id=None
+    hog=None, location=None, group_duration=3600, max_cards=20, most_recent_token=None
 ):
     """Return an array of groups of measurements that happened within a
     `group_duration` seconds of each other; split measurements of
@@ -173,14 +173,14 @@ def grouped_measurements(
         kwargs["hog"] = hog
     if location:
         kwargs["location"] = location
-    if most_recent_id:
-        kwargs["id__lt"] = most_recent_id
+    if most_recent_token:
+        kwargs["ordering_token__lt"] = most_recent_token
     max_measurements_per_card = 3  # this is a typical maximum, not including outliers
     limit = max_cards * max_measurements_per_card
     measurements = (
         Measurement.objects.filter(**kwargs)
         .exclude(video="", measurement_type="video")
-        .order_by("-starred", "-id")[:limit]
+        .order_by("-starred", "-ordering_token")[:limit]
     )
     groups = []
     current_group = {}
@@ -241,20 +241,30 @@ def card_wall_fragment(request):
     """Just the HTML for the wall, suitable for inclusion within a full HTML page
     """
     max_cards = int(request.GET.get("max_cards", 6))
-    most_recent_id = request.GET.get("most_recent_id")
+    most_recent_token = request.GET.get("most_recent_token")
     location = request.GET.get("location")
     hog = request.GET.get("hog")
+    import pdb
+
+    pdb.set_trace()
+
     measurements = grouped_measurements(
-        hog=hog, max_cards=max_cards, location=location, most_recent_id=most_recent_id
+        hog=hog,
+        max_cards=max_cards,
+        location=location,
+        most_recent_token=most_recent_token,
     )
     if measurements:
-        last_id = measurements[-1]["header"].last_id
+        most_recent_token = measurements[-1]["header"].most_recent_token
     else:
-        last_id = ""
+        most_recent_token = ""
     return render(
         request,
         "_card_wall.html",
-        context={"grouped_measurements": measurements, "last_id": last_id},
+        context={
+            "grouped_measurements": measurements,
+            "most_recent_token": most_recent_token,
+        },
     )
 
 

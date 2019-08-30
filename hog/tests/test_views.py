@@ -39,12 +39,25 @@ class GroupedMeasurementTests(TestCase):
             measurements, [{"header": uploaded_video, "video": uploaded_video}]
         )
 
-    def test_ordering(self, mock_delayed_make_poster):
+    def test_starred_ordering(self, mock_delayed_make_poster):
         hog = create_hog()
-        create_measurement(hog=hog, measurement_type="weight", measurement=300.5)
         create_measurement(
             hog=hog, measurement_type="weight", measurement=340.5, starred=True
         )
+        create_measurement(hog=hog, measurement_type="weight", measurement=300.5)
         groups = grouped_measurements(hog=hog.code, group_duration=0)
+        self.assertEqual(len(groups), 2)
         self.assertEqual(groups[0]["weight"].starred, True)
         self.assertEqual(groups[1]["weight"].starred, False)
+
+    def test_starred_paging(self, mock_delayed_make_poster):
+        hog = create_hog()
+        create_measurement(
+            hog=hog, measurement_type="weight", measurement=340.5, starred=True
+        )
+        create_measurement(hog=hog, measurement_type="weight", measurement=300.5)
+        last = create_measurement(hog=hog, measurement_type="weight", measurement=301.5)
+        groups = grouped_measurements(
+            hog=hog.code, group_duration=0, most_recent_token=last.ordering_token
+        )
+        self.assertEqual(len(groups), 1)
