@@ -3,8 +3,7 @@
 
 {% block content %}
 
-<h1>Welcome to Hedgehog Republic!</h1>
-
+<h1>Welcome to {{ republic_name }}!</h1>
 <p class="lead">By joining gardens together and closely monitoring hedgehogs in the area, we hope to maintain and grow our hedgehog populations. Explore the latest monitoring info by clicking on a pin below:</p>
 <h3>Our boxes</h3>
 
@@ -34,7 +33,7 @@
 
 <script>
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYmFjb24iLCJhIjoiY2ltdGYwZGJkMDA2a3Z3bTFucjgyZnlvdCJ9.hplRw1YZqso0DZNteF9S-g';
-var bounds = [[-2.21541, 51.74051], [-2.20105, 51.74452]];
+  var bounds = {{ bbox_string }};
 var map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/streets-v9',

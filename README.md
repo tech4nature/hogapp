@@ -55,6 +55,21 @@ apt-get install redis-server
 apt-get install ffmpeg
 ```
 
+## Define a site and republic to work with
+
+Currently, a site is a Django concept that links a domain to a
+settings file; and a Republic is simply an area shown on the map on
+the home page, along with a name.
+
+To add a new republic, first create a new `Site` in the admin
+interface - the domain name must match what end users will use.  You
+can give it whatever name you like.
+
+Then, again in the admin interface, create a new Republic which is associated with that Site.
+
+The name you give the Republic is the one that appears on the home page etc.
+
+
 ## Generate sample data
 
     ./manage.py generate_data

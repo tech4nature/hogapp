@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.sites.models import Site
 from django.core.validators import validate_slug
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -22,6 +23,17 @@ class Hog(models.Model):
 
     def locations(self):
         return Location.objects.filter(measurement__hog=self).distinct()
+
+
+class Republic(models.Model):
+    code = models.CharField(max_length=80, primary_key=True, validators=[validate_slug])
+    name = models.CharField(max_length=200, blank=True, null=True)
+    box = models.PolygonField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    site = models.OneToOneField(Site, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.name
 
 
 class Location(models.Model):

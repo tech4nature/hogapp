@@ -1,9 +1,10 @@
 from datetime import timedelta
 
+from django.contrib.sites.models import Site
+from django.contrib.gis.geos import Polygon
 from django.db.models import Max, Min
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
-from django.template.loader import render_to_string
 
 from api.models import Hog
 from api.models import Location
@@ -11,16 +12,43 @@ from api.models import Measurement
 
 
 def index(request):
+    try:
+        site = Site.objects.get_current(request)
+        republic = site.republic
+        lat1, lon1, lat2, lon2 = republic.box.extent
+        republic_name = republic.name
+    except Site.DoesNotExist:
+        # a box covering most of the 5 valleys
+        lat1, lon1, lat2, lon2 = (
+            -2.2628743707209,
+            51.72722094040599,
+            -2.1708638726868132,
+            51.760595637972514,
+        )
+        republic_name = "All Stroud Hedgehog Republics"
+    bbox_string = "[[{}, {}], [{}, {}]]".format(lat1, lon1, lat2, lon2)
     videos = (
-        Measurement.objects.filter(measurement_type="video")
+        Measurement.objects.filter(
+            measurement_type="video",
+            location__coords__within=Polygon.from_bbox((lat1, lon1, lat2, lon2)),
+        )
         .order_by("-starred", "-observed_at")
         .exclude(video="")[:2]
     )
+
     grouped = [
         {"header": x, x.measurement_type: x, "video": x, x.measurement_type: x}
         for x in videos
     ]
-    return render(request, "index.html", context={"videos": grouped})
+    return render(
+        request,
+        "index.html",
+        context={
+            "videos": grouped,
+            "republic_name": republic_name,
+            "bbox_string": bbox_string,
+        },
+    )
 
 
 def locations(request):

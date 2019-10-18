@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "django.contrib.humanize",
     "django.contrib.sessions",
+    "django.contrib.sites",
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
