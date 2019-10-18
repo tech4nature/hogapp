@@ -29,7 +29,7 @@
       "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
     },
     {
-      "url": "https://github.com/CheesecakeLabs/heroku-geo-buildpack.git"
+      "url": "https://github.com/heroku/heroku-buildpack-apt"
     },
     {
       "url": "heroku/python"
