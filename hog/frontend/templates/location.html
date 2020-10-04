@@ -21,48 +21,51 @@
     </div>
   </div>
   <div class="col-lg-6">
-   </div>
+  </div>
 </div>
 
-{% if num_measurements %}
- <div class="row">
-   <div class="col-lg-6">
-     <div class="card-wall">
-       <div id="card-wall"><span id="loading">Loading...</span></div>
-     </div>
-   </div>
-   <div class="col-lg-6">
-     <div class="card" id="map"></div>
-     <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
-   </div>
- </div>
 
- {% else %}
- No measurements yet!
- {% endif %}
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card-wall">
+      <div id="card-wall">
+        {% if num_measurements %}<span id="loading">Loading...</span>
+        {% else %}
+        No measurements yet!
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card" id="map"></div>
+    <div class="measurement-chart" id="temp-container" style="width:100%; height:400px;">Loading...</div>
+  </div>
+</div>
+
+
 <script>
-mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYmFjb24iLCJhIjoiY2ltdGYwZGJkMDA2a3Z3bTFucjgyZnlvdCJ9.hplRw1YZqso0DZNteF9S-g';
-var bounds = [[-2.21541, 51.74051], [-2.20105, 51.74452]];
-var map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v9',
-  bounds: bounds,
-  fitBoundsOptions: { padding: 50 },
-  minZoom: 11
-});
-map.addControl(new mapboxgl.NavigationControl());
-$.getJSON("/api/locations/?code={{ location.code }}&format=json", function(data) {
-data.results.forEach(function(box) {
-    if(box.coords) {
-      var coords = box.coords.coordinates;
-      new mapboxgl.Marker()
-        .setLngLat([coords[0], coords[1]])
-      .addTo(map);
-    } else {
-       $('#map').html("No location information!");
-    }
+  mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYmFjb24iLCJhIjoiY2ltdGYwZGJkMDA2a3Z3bTFucjgyZnlvdCJ9.hplRw1YZqso0DZNteF9S-g';
+  var bounds = {{ bbox_string }};
+  var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v9',
+    bounds: bounds,
+    fitBoundsOptions: { padding: 50 },
+    minZoom: 11
   });
-});
+  map.addControl(new mapboxgl.NavigationControl());
+  $.getJSON("/api/locations/?code={{ location.code }}&format=json", function (data) {
+    data.results.forEach(function (box) {
+      if (box.coords) {
+        var coords = box.coords.coordinates;
+        new mapboxgl.Marker()
+          .setLngLat([coords[0], coords[1]])
+          .addTo(map);
+      } else {
+        $('#map').html("No location information!");
+      }
+    });
+  });
 </script>
 
 {% endblock %}

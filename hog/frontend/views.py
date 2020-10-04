@@ -9,6 +9,7 @@ from django.shortcuts import render
 from api.models import Hog
 from api.models import Location
 from api.models import Measurement
+from api.models import Republic
 
 
 def index(request):
@@ -65,6 +66,9 @@ def hogs(request):
 
 def location(request, code):
     location = get_object_or_404(Location, code=code)
+    republic = Republic.objects.filter(box__contains=location.coords).first()
+    lat1, lon1, lat2, lon2 = republic.box.extent
+    bbox_string = "[[{}, {}], [{}, {}]]".format(lat1, lon1, lat2, lon2)
     measurements = Measurement.objects.filter(location=location)
     num_measurements = measurements.count()
     initial_resolution = "day"
@@ -86,6 +90,7 @@ def location(request, code):
             initial_resolution = "hour"
     context = {
         "location": location,
+        "bbox_string": bbox_string,
         "min_date": min_date,
         "max_date": max_date,
         "num_measurements": num_measurements,
