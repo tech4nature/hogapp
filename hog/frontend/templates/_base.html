@@ -1,153 +1,177 @@
-{% load static %}<!doctype html>
+{% load static %}
+<!doctype html>
 <html lang="en">
-  <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-137610291-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-137610291-2');
-    </script>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="shortcut icon" href="{% static 'favicon-32x32.png' %}" type="image/png" />
-    <meta name="description" content="">
-    <title>{{ title }}{% if title %} - {% endif %}Hedgehog Republic</title>
-    {% block opengraph_headers %}{% endblock %}
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo|Open+Sans" media="all" />
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css' rel='stylesheet' />
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-137610291-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-137610291-2');
+  </script>
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <!--Load the AJAX API-->
-    <script src="https://code.highcharts.com/stock/highstock.js"></script>
-    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="{% static 'favicon-32x32.png' %}" type="image/png" />
+  <meta name="description" content="">
+  <title>{{ title }}{% if title %} - {% endif %}Hedgehog Republic</title>
+  {% block opengraph_headers %}{% endblock %}
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arvo|Open+Sans" media="all" />
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
 
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <!--Load the AJAX API-->
+  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
 
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js'></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
 
+  <style>
+    nav,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      font-family: "Arvo", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"
+    }
 
-    <style>
-      nav, h1, h2, h3, h4, h5 {
-      font-family: "Arvo", -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"
+    .bg-blue {
+      background-color: #6ac4ee;
+    }
+
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
       }
-      .bg-blue {
-        background-color: #6ac4ee;
-      }
+    }
 
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
+    body {
+      padding-top: 5rem;
+      background-color: #b4e7fb;
+    }
 
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
+    .card-header .img-circle {
+      height: 50px;
+      width: 50px;
+      margin-right: 10px;
+    }
 
-      body {
-        padding-top: 5rem;
-        background-color: #b4e7fb;
-      }
-
-      .card-header .img-circle {
-        height: 50px;
-        width: 50px;
-        margin-right: 10px;
-      }
-      .card-footer {
+    .card-footer {
       padding: .15rem 1.25rem;
       font-size: 0.7rem;
-      }
-      .img-circle {
-        border-radius: 50%;
-      }
-      .card, .measurement-chart {
-        margin-top: 20px;
-      }
-      .card-header h5 {
-      font-size:1rem;
+    }
+
+    .img-circle {
+      border-radius: 50%;
+    }
+
+    .card,
+    .measurement-chart {
+      margin-top: 20px;
+    }
+
+    .card-header h5 {
+      font-size: 1rem;
       line-height: 1;
-      }
-      h5.card-title {
-       margin: 0;
-      }
-      .starred .card-header {
-       background-color: rgba(255, 214, 0, 0.1)
-      }
-      #map {
-        width: 100%;
-        height: 400px;
+    }
+
+    h5.card-title {
+      margin: 0;
+    }
+
+    .starred .card-header {
+      background-color: rgba(255, 214, 0, 0.1)
+    }
+
+    #map {
+      width: 100%;
+      height: 400px;
       border: 1px solid #ccc;
-      }
-      .no-show {
+    }
+
+    .no-show {
       display: none;
-      }
-      .measure-link {
+    }
+
+    .measure-link {
       color: #007bff;
       cursor: pointer;
-      }
-      .hidden {
+    }
+
+    .hidden {
 
       /* Using negative margins to hide things means that clipboard.js
         can visibly text-select the element
       */
       margin-left: -9000px;
-      }
+    }
 
-      .footer {
+    .footer {
       width: 100%;
       height: 2rem;
       background-color: #f5f5f5;
       margin-top: 20px;
-}
+    }
+  </style>
+</head>
 
-    </style>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-blue fixed-top">
-  <a class="navbar-brand" href="/">Home</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-blue fixed-top">
+    <a class="navbar-brand" href="/">Home</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+      aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'hogs' %}">List of hogs</a>
-      </li>
-    </ul>
-  </div>
-</nav>
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'hogs' %}">List of hogs</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
 
-<main role="main" class="container">
+  <main role="main" class="container">
 
-  {% block content %}{% endblock %}
+    {% block content %}{% endblock %}
 
-</main><!-- /.container -->
+  </main><!-- /.container -->
 
-<footer class="footer">
-  <div class="container">
-    <span class="text-muted"></span>
-  </div>
-</footer>
+  <footer class="footer">
+    <div class="container">
+      <span class="text-muted"></span>
+    </div>
+  </footer>
 
-<!-- Optional JavaScript -->
+  <!-- Optional JavaScript -->
   <!-- recommended by the vanilla bootstrap template -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
   <!-- video player -->
   <script src='https://vjs.zencdn.net/7.4.1/video.js'></script>
-  </body>
+</body>
+
 </html>
