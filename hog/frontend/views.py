@@ -12,26 +12,27 @@ from api.models import Measurement
 from api.models import Republic
 
 
-def index(request):
+def get_republic(request):
     try:
         site = Site.objects.get_current(request)
-        republic = site.republic
-        lat1, lon1, lat2, lon2 = republic.box.extent
-        republic_name = republic.name
+        return site.republic
     except Site.DoesNotExist:
-        # a box covering most of the 5 valleys
-        lat1, lon1, lat2, lon2 = (
+        republic = Republic(name="All Stroud Hedgehog Republics")
+        republic.box.extent = (
             -2.2628743707209,
             51.72722094040599,
             -2.1708638726868132,
             51.760595637972514,
         )
-        republic_name = "All Stroud Hedgehog Republics"
-    bbox_string = "[[{}, {}], [{}, {}]]".format(lat1, lon1, lat2, lon2)
+        return republic
+
+
+def index(request):
+    republic = get_republic(request)
+    bbox_string = "[[{}, {}], [{}, {}]]".format(*republic.box.extent)
     videos = (
         Measurement.objects.filter(
-            measurement_type="video",
-            location__coords__within=Polygon.from_bbox((lat1, lon1, lat2, lon2)),
+            measurement_type="video", location__coords__within=republic.box,
         )
         .order_by("-starred", "-observed_at")
         .exclude(video="")[:2]
@@ -46,7 +47,7 @@ def index(request):
         "index.html",
         context={
             "videos": grouped,
-            "republic_name": republic_name,
+            "republic_name": republic.name,
             "bbox_string": bbox_string,
         },
     )
