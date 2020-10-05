@@ -60,7 +60,13 @@ def locations(request):
 
 
 def hogs(request):
-    hogs = Hog.objects.all()
+    republic = get_republic(request)
+    hogs = (
+        Measurement.objects.filter(location__coords__within=republic.box)
+        .values("hog_id")
+        .distinct()
+    )
+    hogs = Hog.objects.filter(pk__in=hogs)
     context = {"hogs": hogs}
     return render(request, "hogs.html", context=context)
 
