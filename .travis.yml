@@ -8,6 +8,7 @@ env:
     - DB_PASS=
     - DJANGO_SECRET_KEY=kjaslj
     - AWS_SECRET_ACCESS_KEY=asdq3ad
+    - GOOGLE_MAP_API_KEY=asdasd
 addons:
   postgresql: "9.6"
   apt:
