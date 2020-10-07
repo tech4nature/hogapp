@@ -1,3 +1,5 @@
+import datetime
+
 from unittest.mock import patch
 
 from django.test import TestCase
@@ -60,3 +62,30 @@ class GroupedMeasurementTests(TestCase):
             hog=hog.code, group_duration=0, most_recent_token=last.ordering_token
         )
         self.assertEqual(len(groups), 1)
+
+    def test_grouping(self, mock_delayed_make_poster):
+        hog = create_hog()
+        observed_at = datetime.datetime(2000, 1, 1, tzinfo=datetime.timezone.utc)
+        for num in range(10, 100, 10):
+            create_measurement(
+                hog=hog,
+                measurement_type="weight",
+                measurement=num,
+                observed_at=observed_at,
+            )
+            create_measurement(
+                hog=hog,
+                measurement_type="video",
+                observed_at=observed_at,
+                video=SimpleUploadedFile("hog.mp4", b"these are the file contents!"),
+            )
+            create_measurement(
+                hog=hog,
+                measurement_type="temp",
+                measurement=num,
+                observed_at=observed_at,
+            )
+            observed_at += datetime.timedelta(seconds=10)
+        groups = grouped_measurements(hog=hog.code, group_duration=1000)
+        self.assertEqual(len(groups), 1)
+        self.assertEqual(len(groups[0].keys()), 4)  # header, temp, video, weight

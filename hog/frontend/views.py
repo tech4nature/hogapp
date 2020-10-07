@@ -207,6 +207,8 @@ def grouped_measurements(
     `group_duration` seconds of each other; split measurements of
     different hogs into different groups.
 
+    A group has a "header" which is used for the title and photo header. Then it has one of each of the other kinds of measurements. In other words, we show exactly zero or one of each of a weight, temperature, and video within the same `group_duration`.  The final measurement within in group is the one that is shown.
+
     """
     kwargs = {}
     if hog:
