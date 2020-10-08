@@ -207,6 +207,8 @@ def grouped_measurements(
     `group_duration` seconds of each other; split measurements of
     different hogs into different groups.
 
+    A group has a "header" which is used for the title and photo header. Then it has one of each of the other kinds of measurements. In other words, we show exactly zero or one of each of a weight, temperature, and video within the same `group_duration`.  The final measurement within in group is the one that is shown.
+
     """
     kwargs = {}
     if hog:
@@ -216,7 +218,9 @@ def grouped_measurements(
     if most_recent_token:
         kwargs["ordering_token__lt"] = most_recent_token
     max_measurements_per_card = 3  # this is a typical maximum, not including outliers
-    limit = max_cards * max_measurements_per_card
+    limit = min(
+        max_cards * max_measurements_per_card, 2 * 24 * 5
+    )  # at least 5 days of only temp measurements
     measurements = (
         Measurement.objects.filter(**kwargs)
         .exclude(video="", measurement_type="video")
