@@ -25,7 +25,9 @@ def make_poster(measurement_id):
         video_location = measurement.video.path
 
     with tempfile.TemporaryDirectory() as d:
-        for delta in ["0.4", "0.2", "0.1", "0.01"]:
+        for delta in ["0.4", "0.2", "0.1", "0"]:
+            # The filter command select=gt(scene,0.3) selects the frames whose # scene detection score is greater then 0.3. We try to find the
+            # most changey scene
             completed = subprocess.run(
                 [
                     "ffmpeg",
