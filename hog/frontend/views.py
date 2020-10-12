@@ -218,9 +218,8 @@ def grouped_measurements(
     if most_recent_token:
         kwargs["ordering_token__lt"] = most_recent_token
     max_measurements_per_card = 3  # this is a typical maximum, not including outliers
-    limit = min(
-        max_cards * max_measurements_per_card, 2 * 24 * 5
-    )  # at least 5 days of only temp measurements
+    limit = 2 * 24 * 5
+    # at least 5 days of only temp measurements
     measurements = (
         Measurement.objects.filter(**kwargs)
         .exclude(video="", measurement_type="video")
