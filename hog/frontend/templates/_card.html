@@ -48,6 +48,8 @@
     {% endif %}
     <div class="card-footer">
       <!-- this is for search engine spiders --><a class="no-show" href="{% url 'measurement' measurement_id=group.header.id %}">Link to measure on a single page</a>
-      <span class="measure-link" name="{{ group.header.id }}" data-clipboard-target="#link-text-{{group.header.id}}" href="{% url 'measurement' measurement_id=group.header.id %}">get link...</span> <input id="link-text-{{group.header.id}}" class="hidden" type="text" size="40" value="{{ request.scheme }}://{{ request.get_host }}{% url 'measurement' measurement_id=group.header.id %}">
+      {% if group.video %}
+      <span class="measure-link" name="{{ group.video.id }}" data-clipboard-target="#link-text-{{group.video.id}}" href="{% url 'measurement' measurement_id=group.video.id %}">get link...</span> <input id="link-text-{{group.video.id}}" class="hidden" type="text" size="40" value="{{ request.scheme }}://{{ request.get_host }}{% url 'measurement' measurement_id=group.video.id %}">
+      {% endif %}
     </div>
    </div>
