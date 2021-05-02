@@ -2,7 +2,6 @@ libproj-dev
 libgeos-dev
 gdal-bin
 binutils
-ibproj-dev
 libatlas-base-dev
 libblas3
 libatlas3-base
