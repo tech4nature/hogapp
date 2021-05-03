@@ -68,7 +68,7 @@ markdown==3.2.2
     # via -r requirements.in
 markupsafe==1.1.1
     # via jinja2
-numpy==1.19.2
+numpy==1.19.2 --only-binary=numpy
     # via -r requirements.in
 openapi-codec==1.3.2
     # via django-rest-swagger
