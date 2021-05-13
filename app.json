@@ -18,7 +18,10 @@
     },
     "GOOGLE_MAP_API_KEY": {
       "description": "Google Maps API key (for django admin)"
-    }
+    },
+    "DISABLE_COLLECTSTATIC": {
+      "value": "1" 
+    },
   },
   "image": "heroku/python",
   "addons": [
