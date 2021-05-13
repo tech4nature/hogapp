@@ -94,7 +94,7 @@ To sidestep the S3 storage functionality and serve files off the local filesyste
 
 See `app.json` for config.
 
-When the app has been created, `git push heroku master` to deploy.
+When the app has been created, `git push heroku main` to deploy.
 
 
 # About the API
@@ -188,5 +188,5 @@ curl -X PUT "http://username:password@hogserver.com/api/measurements/198136/vide
 Which would return:
 
 ```json
-{"video":"/media/videos/video_cr71xsE.mp4"}
+ {"video":"/media/videos/video_cr71xsE.mp4"}
 ```
