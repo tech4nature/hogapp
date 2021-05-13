@@ -188,5 +188,5 @@ curl -X PUT "http://username:password@hogserver.com/api/measurements/198136/vide
 Which would return:
 
 ```json
-{"video":"/media/videos/video_cr71xsE.mp4"}
+ {"video":"/media/videos/video_cr71xsE.mp4"}
 ```
