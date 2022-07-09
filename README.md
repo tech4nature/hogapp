@@ -2,11 +2,11 @@ Django app for exploring data gathered about hedgehogs, from specially construct
 
 Now retired. Here are screenshots of it when it was in action:
 
-![screenshot 1](../examples/screenshot1.png)
+![screenshot 1](examples/screenshot1.png)
 
-![screenshot 2](../examples/screenshot2.png)
+![screenshot 2](examples/screenshot2.png)
 
-![screenshot 3](../examples/screenshot3.png)
+![screenshot 3](examples/screenshot3.png)
 
 A dump of the database as of 9 July 2022 is at `latest.dump` (restore with `pg_restore --verbose --clean --no-acl --no-owner -h localhost -U myuser -d mydb latest.dump`)
 
