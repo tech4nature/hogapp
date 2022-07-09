@@ -1,6 +1,14 @@
-Django app for exploring data gathered about hedgehogs
+Django app for exploring data gathered about hedgehogs, from specially constructed "hedgehog hotels" in the field, equipped with video, sound, temperature and weight sensors.
 
+Now retired. Here are screenshots of it when it was in action:
 
+![screenshot 1](../examples/screenshot1.png)
+
+![screenshot 2](../examples/screenshot2.png)
+
+![screenshot 3](../examples/screenshot3.png)
+
+[Contribution guidelines for this project](docs/CONTRIBUTING.md)
 # Installation
 
 Requires python3, a postgres server, and a redis server
